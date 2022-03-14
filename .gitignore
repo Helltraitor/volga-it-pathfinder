@@ -1,3 +1,10 @@
+# IDE
+.vs
+
+# Output folders
+build
+out
+
 # Prerequisites
 *.d
 
