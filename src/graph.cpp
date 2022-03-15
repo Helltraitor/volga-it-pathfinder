@@ -6,6 +6,13 @@
 namespace graph
 {
     /* Structs */
+    Neighbor::Neighbor(const std::weak_ptr<Node> t_node, const Direction t_direction)
+    {
+        node = t_node;
+        direction = t_direction;
+    }
+    
+
     Position::Position(const int t_x, const int t_y)
     {
         x = t_x;
@@ -95,6 +102,16 @@ namespace graph
             m_deadend = true;
         }
         return m_deadend;
+    }
+
+    std::vector<Neighbor> Node::getNeighbors() const noexcept
+    {
+        return {
+            Neighbor(m_left, graph::Direction::Left),
+            Neighbor(m_right, graph::Direction::Right),
+            Neighbor(m_up, graph::Direction::Up),
+            Neighbor(m_down, graph::Direction::Down),
+        };
     }
 
     std::weak_ptr<Node> Node::getNode(const Direction direction) const noexcept

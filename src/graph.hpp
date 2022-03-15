@@ -5,12 +5,22 @@
 #include <vector>
 
 namespace graph {
+    class Node;  // Predefinition
+
     enum class Direction
     {
         Left,
         Right,
         Up,
         Down
+    };
+
+    struct Neighbor
+    {
+        std::weak_ptr<Node> node;
+        Direction direction;
+
+        Neighbor(const std::weak_ptr<Node> t_node, const Direction t_direction);
     };
 
     struct Position
@@ -46,6 +56,7 @@ namespace graph {
 
     public:
         bool deadendCheck() noexcept;
+        std::vector<Neighbor> getNeighbors() const noexcept;
         std::weak_ptr<Node> getNode(const Direction direction) const noexcept;
         void setNode(const Direction direction, const std::weak_ptr<Node> self, const std::weak_ptr<Node> node) noexcept;
 
