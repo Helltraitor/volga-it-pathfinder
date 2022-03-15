@@ -19,19 +19,52 @@ namespace pathfinder
         }
     }
 
+    /* Structs */
+    AdviceRoute::AdviceRoute(const Direction t_world, const graph::Direction t_graph) noexcept : world(t_world), graph(t_graph) {}
+
+    Advice::Advice(const AdviceType t_type, const std::vector<graph::Direction> t_route) noexcept : type(t_type)
+    {
+        auto advice_route = std::vector<AdviceRoute>(t_route.size());
+        for (auto direction : t_route)
+        {
+            advice_route.push_back(AdviceRoute(directionToDirection(direction), direction));
+        }
+    }
+
+    Advice::Advice(const AdviceType t_type, const std::initializer_list<graph::Direction> t_route) noexcept : Advice(t_type, t_route) {}
+    Advice::Advice(const AdviceType t_type) noexcept : Advice(t_type, {}) {}
+
+    /* Pathfinder */
     Pathfinder::Pathfinder(
         const std::shared_ptr<Fairyland> t_world,
         const Character t_char,
         const std::shared_ptr<graph::Graph> t_graph) noexcept
-        : m_world(t_world), m_char(t_char), m_graph(t_graph), m_cur_strategy(Strategy::None) {}
+        : m_world(t_world), m_char(t_char), m_graph(t_graph) {}
 
-    graph::Direction Pathfinder::getAdvice() noexcept
+    Advice Pathfinder::getAdvice() noexcept
     {
-        switch (m_cur_strategy)
+        auto node = m_graph->getCurrent().lock();
+
+        // DEADEND ADVICE
+        if (node->deadendCheck())
         {
-        default:  // None
-            // if deadlock then no choice
-            return graph::Direction::Left;
+            // Find only one no deadend
+            for (auto neig : node->getNeighbors())
+            {
+                if (!neig.node.expired() && !neig.node.lock()->deadendCheck())
+                {
+                    return Advice(AdviceType::Move, { neig.direction });
+                }
+            }
+        }
+
+        // VISIT UNVISITED ADVICE
+        for (auto neig : node->getNeighbors())
+        {
+            if (!neig.node.expired() && !neig.node.lock()->m_visited)
+            {
+                return Advice(AdviceType::Move, { neig.direction });
+            }
         }
     }
 
