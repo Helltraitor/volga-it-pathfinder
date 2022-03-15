@@ -5,16 +5,30 @@
 #include <vector>
 
 namespace graph {
-    using Position = std::pair<int, int>;
-
-    using Rect = std::pair<Position, Position>;
-
     enum class Direction
     {
         Left,
         Right,
         Up,
         Down
+    };
+
+    struct Position
+    {
+        int x;
+        int y;
+
+        Position(const int t_x, const int t_y);
+    };
+
+    struct Rectangle
+    {
+        int min_x;
+        int min_y;
+        int max_x;
+        int max_y;
+
+        Rectangle(const int t_min_x, const int t_min_y, const int t_max_x, const int t_max_y);
     };
 
     class Node
@@ -56,7 +70,7 @@ namespace graph {
         void createNodeAt(const Direction direction) noexcept;
         std::weak_ptr<Node> getCurrent() const noexcept;
         size_t getNodeCount() const noexcept;
-        Rect getRect() const noexcept;
+        Rectangle getRect() const noexcept;
         void go(const Direction direction);
         bool isExplored() const noexcept;
         void normalizeRect() noexcept;
@@ -66,7 +80,7 @@ namespace graph {
         void updateRect(const Position pos) noexcept;
 
     private:
-        Rect m_rect;
+        Rectangle m_rect;
         std::vector<std::shared_ptr<Node>> m_nodes;
         std::weak_ptr<Node> m_current;
         std::weak_ptr<Node> m_previous;

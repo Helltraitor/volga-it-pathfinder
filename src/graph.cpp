@@ -5,6 +5,35 @@
 
 namespace graph
 {
+    /* Structs */
+    Position::Position(const int t_x, const int t_y)
+    {
+        x = t_x;
+        y = t_y;
+    }
+
+    Rectangle::Rectangle(const int t_min_x, const int t_min_y, const int t_max_x, const int t_max_y)
+    {
+        min_x = t_min_x;
+        min_y = t_min_y;
+        max_x = t_max_x;
+        max_y = t_max_y;
+    }
+
+    bool operator == (const Position& first, const Position& second)
+    {
+        return first.x == second.x
+            && first.y == second.y;
+    }
+
+    bool operator == (const Rectangle& first, const Rectangle& second)
+    {
+        return first.min_x == second.min_x
+            && first.min_y == second.min_y
+            && first.max_x == second.max_x
+            && first.max_y == second.max_y;
+    }
+
     /* Node */
     Node::Node(Position pos,
                bool visited,
@@ -22,19 +51,19 @@ namespace graph
     {
         if (!m_left.expired())
         {
-            m_left.lock()->m_pos = std::make_pair(m_pos.first - 1, m_pos.second);
+            m_left.lock()->m_pos = Position(m_pos.x - 1, m_pos.y);
         }
         if (!m_right.expired())
         {
-            m_right.lock()->m_pos = std::make_pair(m_pos.first + 1, m_pos.second);
+            m_right.lock()->m_pos = Position(m_pos.x + 1, m_pos.y);
         }
         if (!m_up.expired())
         {
-            m_up.lock()->m_pos = std::make_pair(m_pos.first, m_pos.second + 1);
+            m_up.lock()->m_pos = Position(m_pos.x, m_pos.y + 1);
         }
         if (!m_down.expired())
         {
-            m_down.lock()->m_pos = std::make_pair(m_pos.first, m_pos.second - 1);
+            m_down.lock()->m_pos = Position(m_pos.x, m_pos.y - 1);
         }
     }
 
@@ -46,7 +75,7 @@ namespace graph
                      std::weak_ptr<Node>(),
                      std::weak_ptr<Node>()) {}
 
-    Node::Node(bool visited) noexcept : Node::Node(std::make_pair(0, 0), visited) {}
+    Node::Node(bool visited) noexcept : Node::Node(Position(0, 0), visited) {}
 
     Node::Node() noexcept : Node::Node(false) {}
 
@@ -97,22 +126,22 @@ namespace graph
         {
         case Direction::Left:
             m_left = node;
-            m_left.lock()->m_pos = std::make_pair(m_pos.first - 1, m_pos.second);
+            m_left.lock()->m_pos = Position(m_pos.x - 1, m_pos.y);
             m_left.lock()->m_right = self;
             break;
         case Direction::Right:
             m_right = node;
-            m_right.lock()->m_pos = std::make_pair(m_pos.first + 1, m_pos.second);
+            m_right.lock()->m_pos = Position(m_pos.x + 1, m_pos.y);
             m_right.lock()->m_left = self;
             break;
         case Direction::Up:
             m_up = node;
-            m_up.lock()->m_pos = std::make_pair(m_pos.first, m_pos.second + 1);
+            m_up.lock()->m_pos = Position(m_pos.x, m_pos.y + 1);
             m_up.lock()->m_down = self;
             break;
         case Direction::Down:
             m_down = node;
-            m_down.lock()->m_pos = std::make_pair(m_pos.first, m_pos.second - 1);
+            m_down.lock()->m_pos = Position(m_pos.x, m_pos.y - 1);
             m_down.lock()->m_up = self;
             break;
         }
@@ -121,10 +150,10 @@ namespace graph
     /* Graph */
     Graph::Graph(std::shared_ptr<Node> start) noexcept
         : m_start(start),
-          m_current(start)
+          m_current(start),
+          m_rect(0, 0, 0, 0)
     {
         m_nodes.push_back(start);
-        m_rect = std::make_pair(std::make_pair(0, 0), std::make_pair(0, 0));
     }
 
     void Graph::createNodeAt(const Direction direction) noexcept
@@ -133,16 +162,16 @@ namespace graph
         switch (direction)
         {
         case Direction::Left:
-            pos.first -= 1;
+            pos.x -= 1;
             break;
         case Direction::Right:
-            pos.first += 1;
+            pos.x += 1;
             break;
         case Direction::Up:
-            pos.second += 1;
+            pos.y += 1;
             break;
         case Direction::Down:
-            pos.second -= 1;
+            pos.y -= 1;
             break;
         }
 
@@ -174,7 +203,7 @@ namespace graph
         return m_nodes.size();
     }
 
-    Rect Graph::getRect() const noexcept
+    Rectangle Graph::getRect() const noexcept
     {
         return m_rect;
     }
@@ -207,23 +236,23 @@ namespace graph
 
     void Graph::normalizeRect() noexcept
     {
-        int delta_x = m_rect.second.first - m_rect.first.first;
-        int delta_y = m_rect.second.second - m_rect.first.second;
+        int dif_x = -m_rect.min_x;
+        int dif_y = -m_rect.min_y;
 
-        if (delta_x == 0 && delta_y == 0)
+        if (dif_x == 0 && dif_y == 0)
         {
             return;
         }
 
-        m_rect.first.first += delta_x;
-        m_rect.first.second += delta_y;
-        m_rect.second.first += delta_x;
-        m_rect.second.second += delta_y;
+        m_rect.min_x += dif_x;
+        m_rect.min_y += dif_y;
+        m_rect.max_x += dif_x;
+        m_rect.max_y += dif_y;
 
         for (auto node : m_nodes)
         {
-            node->m_pos.first += delta_x;
-            node->m_pos.second += delta_y;
+            node->m_pos.x += dif_x;
+            node->m_pos.y += dif_y;
         }
     }
 
@@ -237,8 +266,8 @@ namespace graph
 
         for (auto node : m_nodes)
         {
-            auto y = node->m_pos.second;
-            auto x = node->m_pos.first;
+            auto x = node->m_pos.x;
+            auto y = node->m_pos.y;
             map[y][x] = '.';
 
             if (!node->m_visited)
@@ -263,7 +292,7 @@ namespace graph
                 map[y - 1][x] = '#';
             }
         }
-        map[m_start.lock()->m_pos.second][m_start.lock()->m_pos.first] = int(start);
+        map[m_start.lock()->m_pos.y][m_start.lock()->m_pos.x] = int(start);
 
         std::string buffer;
         for (int y = 9; y > -1; y--)
@@ -286,22 +315,22 @@ namespace graph
     /// <returns></returns>
     void Graph::updateRect(const Position pos) noexcept
     {
-        if (m_rect.first.first > pos.first)
+        if (m_rect.min_x > pos.x)
         {
-            m_rect.first.first = pos.first;
+            m_rect.min_x = pos.x;
         }
-        else if (m_rect.second.first < pos.first)
+        else if (m_rect.max_x < pos.x)
         {
-            m_rect.second.first = pos.first;
+            m_rect.max_x = pos.x;
         }
 
-        if (m_rect.first.second > pos.second)
+        if (m_rect.min_y > pos.y)
         {
-            m_rect.first.second = pos.second;
+            m_rect.min_y = pos.y;
         }
-        else if (m_rect.second.second < pos.second)
+        else if (m_rect.max_y < pos.y)
         {
-            m_rect.second.second = pos.second;
+            m_rect.max_y = pos.y;
         }
     }
 }

@@ -29,9 +29,8 @@ int main()
     /**/
     auto ivan_graph = std::make_shared<graph::Graph>(std::make_shared<graph::Node>(true));
     auto ivan_pathfinder = pathfinder::Pathfinder(world, Character::Ivan, ivan_graph);
+
     ivan_pathfinder.updateNode();
-    std::cout << ivan_graph->getRect().first.second << std::endl;
-    auto advice = ivan_pathfinder.getAdvice();
 
     std::cout << "Is Ivan deadend: " << ivan_graph->getCurrent().lock()->deadendCheck() << std::endl;
     
@@ -40,8 +39,8 @@ int main()
 
     auto elena_graph = std::make_shared<graph::Graph>(std::make_shared<graph::Node>(true));
     auto elena_pathfinder = pathfinder::Pathfinder(world, Character::Elena, elena_graph);
+
     elena_pathfinder.updateNode();
-    advice = elena_pathfinder.getAdvice();
 
     std::cout << "Is Elena deadend: " << elena_graph->getCurrent().lock()->deadendCheck() << std::endl;
 
