@@ -80,21 +80,19 @@ namespace pathfinder
 
     void Pathfinder::updateNode() noexcept
     {
-        if (m_world->canGo(m_char, Direction::Left))
+        const auto directions = {
+            graph::Direction::Left,
+            graph::Direction::Right,
+            graph::Direction::Up,
+            graph::Direction::Down
+        };
+
+        for (auto direction : directions)
         {
-            m_graph->createNodeAt(graph::Direction::Left);
-        }
-        if (m_world->canGo(m_char, Direction::Right))
-        {
-            m_graph->createNodeAt(graph::Direction::Right);
-        }
-        if (m_world->canGo(m_char, Direction::Up))
-        {
-            m_graph->createNodeAt(graph::Direction::Up);
-        }
-        if (m_world->canGo(m_char, Direction::Down))
-        {
-            m_graph->createNodeAt(graph::Direction::Down);
+            if (m_world->canGo(m_char, directionToDirection(direction)))
+            {
+                m_graph->createNodeAt(direction);
+            }
         }
     }
 }
