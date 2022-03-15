@@ -7,20 +7,6 @@
 #include <iostream>
 #include <string>
 
-Direction graphToFairytail(const graph::Direction direction)
-{
-    switch (direction)
-    {
-    case graph::Direction::Left:
-        return Direction::Left;
-    case graph::Direction::Right:
-        return Direction::Right;
-    case graph::Direction::Up:
-        return Direction::Up;
-    default:
-        return Direction::Down;
-    }
-}
 
 int main()
 {

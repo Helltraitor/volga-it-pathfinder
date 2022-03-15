@@ -4,6 +4,21 @@
 
 namespace pathfinder
 {
+    Direction directionToDirection(const graph::Direction direction) noexcept
+    {
+        switch (direction)
+        {
+        case graph::Direction::Left:
+            return Direction::Left;
+        case graph::Direction::Right:
+            return Direction::Right;
+        case graph::Direction::Up:
+            return Direction::Up;
+        default:
+            return Direction::Down;
+        }
+    }
+
     Pathfinder::Pathfinder(
         const std::shared_ptr<Fairyland> t_world,
         const Character t_char,
