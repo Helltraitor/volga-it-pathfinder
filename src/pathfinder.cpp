@@ -20,10 +20,14 @@ namespace pathfinder
         }
     }
 
-    bool Pathfinder::isConnected(const Pathfinder& other) const noexcept
+    Connection Pathfinder::isConnected(const Pathfinder& other) const noexcept
     {
+        if (!m_graph->isExplored() || !other.m_graph->isExplored())
+        {
+            return Connection::Unknown;
+        }
         return m_graph->getNodeCount() == other.m_graph->getNodeCount()
-            && m_graph->isExplored() && other.m_graph->isExplored();
+            ? Connection::Linked : Connection::Divided;
     }
 
     void Pathfinder::updateNode() noexcept

@@ -49,7 +49,18 @@ int main()
     std::cout << elena_graph->printMap('&');
     /**/
 
-    std::cout << "Is connected: " << ivan_pathfinder.isConnected(elena_pathfinder) << std::endl;
+    std::string conn;
+    switch (ivan_pathfinder.isConnected(elena_pathfinder))
+    {
+    case pathfinder::Connection::Linked:
+        conn = "Linked";
+    case pathfinder::Connection::Divided:
+        conn = "Divided";
+    default:
+        conn = "Unknown";
+    }
+
+    std::cout << "Connection state: " << conn << std::endl;
 
     return 0;
 }

@@ -15,6 +15,13 @@ namespace pathfinder
 		GoDown
 	};
 
+	enum class Connection
+	{
+		Linked,
+		Divided,
+		Unknown
+	};
+
 	class Pathfinder
 	{
 	public:
@@ -22,7 +29,7 @@ namespace pathfinder
 
 	public:
 		graph::Direction getAdvice() noexcept;
-		bool isConnected(const Pathfinder& other) const noexcept;
+		Connection isConnected(const Pathfinder& other) const noexcept;
 		void updateNode() noexcept;
 
 	private:
