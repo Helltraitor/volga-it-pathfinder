@@ -55,8 +55,10 @@ namespace graph {
     public:
         void createNodeAt(const Direction direction) noexcept;
         std::weak_ptr<Node> getCurrent() const noexcept;
+        size_t getNodeCount() const noexcept;
         Rect getRect() const noexcept;
         void go(const Direction direction);
+        bool isExplored() const noexcept;
         void normalizeRect() noexcept;
         std::string printMap(const char start) const noexcept;
 

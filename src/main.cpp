@@ -49,5 +49,7 @@ int main()
     std::cout << elena_graph->printMap('&');
     /**/
 
+    std::cout << "Is connected: " << ivan_pathfinder.isConnected(elena_pathfinder) << std::endl;
+
     return 0;
 }

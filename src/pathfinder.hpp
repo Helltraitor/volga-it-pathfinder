@@ -22,10 +22,8 @@ namespace pathfinder
 
 	public:
 		graph::Direction getAdvice() noexcept;
+		bool isConnected(const Pathfinder& other) const noexcept;
 		void updateNode() noexcept;
-
-	private:
-		
 
 	private:
 		std::shared_ptr<Fairyland> m_world;

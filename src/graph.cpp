@@ -169,6 +169,11 @@ namespace graph
         return m_current;
     }
 
+    size_t Graph::getNodeCount() const noexcept
+    {
+        return m_nodes.size();
+    }
+
     Rect Graph::getRect() const noexcept
     {
         return m_rect;
@@ -185,6 +190,19 @@ namespace graph
         m_previous = m_current;
         m_current = m_current.lock()->getNode(direction);
         m_current.lock()->m_visited = true;
+    }
+
+    bool Graph::isExplored() const noexcept
+    {
+        for (auto node : m_nodes)
+        {
+            // All nodes must be updated or some paths will leak
+            if (!node->m_visited)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     void Graph::normalizeRect() noexcept

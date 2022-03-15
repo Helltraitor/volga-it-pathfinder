@@ -20,6 +20,12 @@ namespace pathfinder
         }
     }
 
+    bool Pathfinder::isConnected(const Pathfinder& other) const noexcept
+    {
+        return m_graph->getNodeCount() == other.m_graph->getNodeCount()
+            && m_graph->isExplored() && other.m_graph->isExplored();
+    }
+
     void Pathfinder::updateNode() noexcept
     {
         if (m_world->canGo(m_char, Direction::Left))
