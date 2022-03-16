@@ -62,6 +62,8 @@ namespace pathfinder {
                 return Advice(AdviceType::Move, { neig.direction });
             }
         }
+
+        return Advice(AdviceType::Wait, {});
     }
 
     Connection Pathfinder::isConnected(const Pathfinder& other) const noexcept
