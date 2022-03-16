@@ -46,7 +46,7 @@ namespace graph {
                std::weak_ptr<Node> right,
                std::weak_ptr<Node> up,
                std::weak_ptr<Node> down) noexcept
-        : m_pos(pos),
+        : m_position(pos),
         m_visited(visited),
         m_deadend(false),
         m_left(left),
@@ -55,16 +55,16 @@ namespace graph {
         m_down(right)
     {
         if (!m_left.expired()) {
-            m_left.lock()->m_pos = Position(m_pos.x - 1, m_pos.y);
+            m_left.lock()->m_position = Position(m_position.x - 1, m_position.y);
         }
         if (!m_right.expired()) {
-            m_right.lock()->m_pos = Position(m_pos.x + 1, m_pos.y);
+            m_right.lock()->m_position = Position(m_position.x + 1, m_position.y);
         }
         if (!m_up.expired()) {
-            m_up.lock()->m_pos = Position(m_pos.x, m_pos.y + 1);
+            m_up.lock()->m_position = Position(m_position.x, m_position.y + 1);
         }
         if (!m_down.expired()) {
-            m_down.lock()->m_pos = Position(m_pos.x, m_pos.y - 1);
+            m_down.lock()->m_position = Position(m_position.x, m_position.y - 1);
         }
     }
 
@@ -133,22 +133,22 @@ namespace graph {
         switch (direction) {
             case Direction::Left:
                 m_left = node;
-                m_left.lock()->m_pos = Position(m_pos.x - 1, m_pos.y);
+                m_left.lock()->m_position = Position(m_position.x - 1, m_position.y);
                 m_left.lock()->m_right = self;
                 break;
             case Direction::Right:
                 m_right = node;
-                m_right.lock()->m_pos = Position(m_pos.x + 1, m_pos.y);
+                m_right.lock()->m_position = Position(m_position.x + 1, m_position.y);
                 m_right.lock()->m_left = self;
                 break;
             case Direction::Up:
                 m_up = node;
-                m_up.lock()->m_pos = Position(m_pos.x, m_pos.y + 1);
+                m_up.lock()->m_position = Position(m_position.x, m_position.y + 1);
                 m_up.lock()->m_down = self;
                 break;
             case Direction::Down:
                 m_down = node;
-                m_down.lock()->m_pos = Position(m_pos.x, m_pos.y - 1);
+                m_down.lock()->m_position = Position(m_position.x, m_position.y - 1);
                 m_down.lock()->m_up = self;
                 break;
         }
@@ -158,14 +158,14 @@ namespace graph {
     Graph::Graph(std::shared_ptr<Node> start) noexcept
         : m_start(start),
         m_current(start),
-        m_rect(0, 0, 0, 0)
+        m_rectangle(0, 0, 0, 0)
     {
         m_nodes.push_back(start);
     }
 
     void Graph::createNodeAt(const Direction direction) noexcept
     {
-        auto pos = m_current.lock()->m_pos;
+        auto pos = m_current.lock()->m_position;
         switch (direction) {
             case Direction::Left:
                 pos.x -= 1;
@@ -183,7 +183,7 @@ namespace graph {
 
         std::weak_ptr<Node> target;
         for (auto& node : m_nodes) {
-            if (pos == node->m_pos) {
+            if (pos == node->m_position) {
                 target = node;
             }
         }
@@ -206,9 +206,9 @@ namespace graph {
         return m_nodes.size();
     }
 
-    Rectangle Graph::getRect() const noexcept
+    Rectangle Graph::getRectangle() const noexcept
     {
-        return m_rect;
+        return m_rectangle;
     }
 
     void Graph::go(const Direction direction)
@@ -236,21 +236,21 @@ namespace graph {
 
     void Graph::normalizeRect() noexcept
     {
-        int dif_x = -m_rect.min_x;
-        int dif_y = -m_rect.min_y;
+        int dif_x = -m_rectangle.min_x;
+        int dif_y = -m_rectangle.min_y;
 
         if (dif_x == 0 && dif_y == 0) {
             return;
         }
 
-        m_rect.min_x += dif_x;
-        m_rect.min_y += dif_y;
-        m_rect.max_x += dif_x;
-        m_rect.max_y += dif_y;
+        m_rectangle.min_x += dif_x;
+        m_rectangle.min_y += dif_y;
+        m_rectangle.max_x += dif_x;
+        m_rectangle.max_y += dif_y;
 
         for (auto& node : m_nodes) {
-            node->m_pos.x += dif_x;
-            node->m_pos.y += dif_y;
+            node->m_position.x += dif_x;
+            node->m_position.y += dif_y;
         }
     }
 
@@ -260,8 +260,8 @@ namespace graph {
         memset((char*)map, '?', 100);
 
         for (auto& node : m_nodes) {
-            auto x = node->m_pos.x;
-            auto y = node->m_pos.y;
+            auto x = node->m_position.x;
+            auto y = node->m_position.y;
             map[y][x] = '.';
 
             if (!node->m_visited) {
@@ -281,7 +281,7 @@ namespace graph {
                 map[y - 1][x] = '#';
             }
         }
-        map[m_start.lock()->m_pos.y][m_start.lock()->m_pos.x] = int(start);
+        map[m_start.lock()->m_position.y][m_start.lock()->m_position.x] = int(start);
 
         std::string buffer;
         for (int y = 9; y > -1; y--) {
@@ -298,18 +298,18 @@ namespace graph {
     /// And it's being used for map normalization after Ivan and Elena meeting.
     void Graph::updateRect(const Position pos) noexcept
     {
-        if (m_rect.min_x > pos.x) {
-            m_rect.min_x = pos.x;
+        if (m_rectangle.min_x > pos.x) {
+            m_rectangle.min_x = pos.x;
         }
-        else if (m_rect.max_x < pos.x) {
-            m_rect.max_x = pos.x;
+        else if (m_rectangle.max_x < pos.x) {
+            m_rectangle.max_x = pos.x;
         }
 
-        if (m_rect.min_y > pos.y) {
-            m_rect.min_y = pos.y;
+        if (m_rectangle.min_y > pos.y) {
+            m_rectangle.min_y = pos.y;
         }
-        else if (m_rect.max_y < pos.y) {
-            m_rect.max_y = pos.y;
+        else if (m_rectangle.max_y < pos.y) {
+            m_rectangle.max_y = pos.y;
         }
     }
 }

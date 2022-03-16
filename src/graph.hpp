@@ -56,7 +56,7 @@ namespace graph {
         void setNode(const Direction direction, const std::weak_ptr<Node> self, const std::weak_ptr<Node> node) noexcept;
 
     public:
-        Position m_pos;
+        Position m_position;
         bool m_visited;
 
     private:
@@ -75,7 +75,7 @@ namespace graph {
         void createNodeAt(const Direction direction) noexcept;
         std::weak_ptr<Node> getCurrent() const noexcept;
         size_t getNodeCount() const noexcept;
-        Rectangle getRect() const noexcept;
+        Rectangle getRectangle() const noexcept;
         void go(const Direction direction);
         bool isExplored() const noexcept;
         void normalizeRect() noexcept;
@@ -85,7 +85,7 @@ namespace graph {
         void updateRect(const Position pos) noexcept;
 
     private:
-        Rectangle m_rect;
+        Rectangle m_rectangle;
         std::vector<std::shared_ptr<Node>> m_nodes;
         std::weak_ptr<Node> m_current;
         std::weak_ptr<Node> m_previous;
