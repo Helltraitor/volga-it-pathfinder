@@ -40,9 +40,9 @@ namespace pathfinder {
         Pathfinder(const std::shared_ptr<Fairyland> world, const Character t_char, const std::shared_ptr<graph::Graph>) noexcept;
 
     public:
-        Advice getAdvice() noexcept;
+        Advice getAdvice() const noexcept;
         Connection isConnected(const Pathfinder& other) const noexcept;
-        void updateNode() noexcept;
+        void updateNode() const noexcept;
 
     private:
         std::shared_ptr<Fairyland> m_world;

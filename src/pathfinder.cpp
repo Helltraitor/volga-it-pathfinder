@@ -42,7 +42,7 @@ namespace pathfinder {
         : m_world(t_world), m_char(t_char), m_graph(t_graph)
     {}
 
-    Advice Pathfinder::getAdvice() noexcept
+    Advice Pathfinder::getAdvice() const noexcept
     {
 
         // DEADEND ADVICE
@@ -92,7 +92,7 @@ namespace pathfinder {
         }
     }
 
-    void Pathfinder::updateNode() noexcept
+    void Pathfinder::updateNode() const noexcept
     {
         const auto directions = {
             graph::Direction::Left,
