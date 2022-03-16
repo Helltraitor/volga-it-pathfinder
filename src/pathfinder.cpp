@@ -17,6 +17,35 @@ namespace pathfinder {
         }
     }
 
+    bool movePals(
+        const Pathfinder& pathfinder,
+        const AdviceRoute& advice_route
+    ) noexcept
+    {
+        bool meeting = false;
+        if (pathfinder.getCharacter() == Character::Ivan) {
+            meeting = pathfinder.getWorld()->go(advice_route.world, Direction::Pass);
+        }
+        else {
+            meeting = pathfinder.getWorld()->go(Direction::Pass, advice_route.world);
+        }
+        pathfinder.go(advice_route.graph);
+        return meeting;
+    }
+
+    bool movePals(
+        const Pathfinder& ivan_p,
+        const Pathfinder& elena_p,
+        const AdviceRoute& ivan_ar,
+        const AdviceRoute& elena_ar
+    ) noexcept
+    {
+        auto meeting = ivan_p.getWorld()->go(ivan_ar.world, elena_ar.world);
+        ivan_p.go(ivan_ar.graph);
+        elena_p.go(elena_ar.graph);
+        return meeting;
+    }
+
     /* Structs */
     AdviceRoute::AdviceRoute(const Direction t_world, const graph::Direction t_graph) noexcept : world(t_world), graph(t_graph) {}
 
@@ -39,7 +68,7 @@ namespace pathfinder {
         const std::shared_ptr<Fairyland> t_world,
         const Character t_char,
         const std::shared_ptr<graph::Graph> t_graph) noexcept
-        : m_world(t_world), m_char(t_char), m_graph(t_graph)
+        : m_world(t_world), m_character(t_char), m_graph(t_graph)
     {}
 
     Advice Pathfinder::getAdvice() const noexcept
@@ -66,6 +95,23 @@ namespace pathfinder {
         }
 
         return Advice(AdviceType::Rendezvous);
+    }
+
+    Character Pathfinder::getCharacter() const noexcept
+    {
+        return m_character;
+    }
+
+    std::shared_ptr<Fairyland> Pathfinder::getWorld() const noexcept
+    {
+        return m_world;
+    }
+
+    void Pathfinder::go(const graph::Direction direction) const noexcept
+    {
+        m_graph->go(direction);
+        updateNode();
+        m_graph->getCurrent().lock()->deadendCheck();
     }
 
     Connection Pathfinder::isConnected(const Pathfinder& other) const noexcept
@@ -102,7 +148,7 @@ namespace pathfinder {
         };
 
         for (auto direction : directions) {
-            if (m_world->canGo(m_char, directionToDirection(direction))) {
+            if (m_world->canGo(m_character, directionToDirection(direction))) {
                 m_graph->createNodeAt(direction);
             }
         }
