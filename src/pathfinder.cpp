@@ -68,8 +68,8 @@ namespace pathfinder {
 
     Connection Pathfinder::isConnected(const Pathfinder& other) const noexcept
     {
-        auto self_explored = m_graph->isExplored();
-        auto other_explored = other.m_graph->isExplored();
+        auto self_explored = static_cast<int>(m_graph->isExplored());
+        auto other_explored = static_cast<int>(other.m_graph->isExplored());
 
         switch ((self_explored << 1) | other_explored) {
             // False, True
