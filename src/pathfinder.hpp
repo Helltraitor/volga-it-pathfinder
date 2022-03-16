@@ -8,9 +8,7 @@
 namespace pathfinder {
     enum class AdviceType {
         Move,
-        Rendezvous,
-        Syncronize,
-        Wait
+        Rendezvous,  // Used when the labyrinth is explored and you ready to meet you friend.
     };
 
     enum class Connection {

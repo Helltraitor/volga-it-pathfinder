@@ -44,9 +44,9 @@ namespace pathfinder {
 
     Advice Pathfinder::getAdvice() noexcept
     {
-        auto node = m_graph->getCurrent().lock();
 
         // DEADEND ADVICE
+        auto node = m_graph->getCurrent().lock();
         if (node->deadendCheck()) {
             // Find only one no deadend
             for (auto& neig : node->getNeighbors()) {
@@ -54,16 +54,18 @@ namespace pathfinder {
                     return Advice(AdviceType::Move, { neig.direction });
                 }
             }
+
+            // If all deadend then all are visited, so use shortcut
+            return Advice(AdviceType::Rendezvous);
         }
 
         // VISIT UNVISITED ADVICE
-        for (auto& neig : node->getNeighbors()) {
-            if (!neig.node.expired() && !neig.node.lock()->m_visited) {
-                return Advice(AdviceType::Move, { neig.direction });
-            }
+        auto route = m_graph->findUnvisitedNode();
+        if (!route.empty()) {
+            return Advice(AdviceType::Move, route);
         }
 
-        return Advice(AdviceType::Wait, {});
+        return Advice(AdviceType::Rendezvous);
     }
 
     Connection Pathfinder::isConnected(const Pathfinder& other) const noexcept
