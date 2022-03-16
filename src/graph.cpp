@@ -332,8 +332,8 @@ namespace graph {
         map[m_start.lock()->m_position.y][m_start.lock()->m_position.x] = int(start);
 
         std::string buffer;
-        for (int y = 9; y > -1; y--) {
-            for (int x = 0; x < 10; x++) {
+        for (int y = 9; y > -1; --y) {
+            for (int x = 0; x < 10; ++x) {
                 buffer.push_back(map[y][x]);
             }
             buffer.push_back('\n');
