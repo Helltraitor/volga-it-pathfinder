@@ -39,6 +39,29 @@ namespace graph {
             && first.max_y == second.max_y;
     }
 
+    Tadpole::Tadpole(const std::vector<Direction> t_route, const std::vector<Position> t_nodes, std::weak_ptr<Node> t_head) noexcept
+        : route(t_route), nodes(t_nodes), head(t_head)
+    {}
+
+    std::vector<Tadpole> Tadpole::produceTadpole() const noexcept
+    {
+        std::vector<Tadpole> passages;
+        auto position = head.lock()->m_position;
+        for (auto& neig : head.lock()->getNeighbors()) {
+            if (!neig.node.expired()) {
+                auto tad = Tadpole(*this);
+                tad.head = neig.node;
+                // Adding this position in nodes list (visited nodes)
+                tad.nodes.push_back(position);
+                // Adding neighbor direction because this direction is point
+                // on this node realtive to previous. This allows to construct
+                // a full path to the head.
+                tad.route.push_back(neig.direction);
+            }
+        }
+        return passages;
+    }
+
     /* Node */
     Node::Node(const Position& pos,
                const bool visited,
@@ -194,6 +217,26 @@ namespace graph {
         }
         m_current.lock()->setNode(direction, m_current, target);
         updateRectangle(pos);
+    }
+
+    // Returns nearest unvisited node. Nodes are tooks in (left, right, up, down)
+    // order. Non-recursive function - will not occur fatal error.
+    std::vector<Direction> Graph::findUnvisitedNode() const noexcept
+    {
+        std::vector<Tadpole> tads{ Tadpole({}, {}, m_current) };
+        while (!tads.empty()) {
+            std::vector<Tadpole> processed;
+            processed.reserve(tads.size() * 4);
+            for (auto& tad : tads) {
+                if (!tad.head.lock()->m_visited) {
+                    return tad.route;
+                }
+                auto subtads = tad.produceTadpole();
+                processed.insert(processed.end(), subtads.begin(), subtads.end());
+            }
+            tads = processed;
+        }
+        return {};
     }
 
     std::weak_ptr<Node> Graph::getCurrent() const noexcept

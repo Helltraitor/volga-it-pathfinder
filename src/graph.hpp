@@ -37,6 +37,15 @@ namespace graph {
         Rectangle(const int t_min_x, const int t_min_y, const int t_max_x, const int t_max_y);
     };
 
+    struct Tadpole {
+        std::vector<Direction> route;
+        std::vector<Position> nodes;
+        std::weak_ptr<Node> head;
+
+        Tadpole(const std::vector<Direction> t_route, const std::vector<Position> t_nodes, std::weak_ptr<Node> t_head) noexcept;
+        std::vector<Tadpole> produceTadpole() const noexcept;
+    };
+
     class Node {
     public:
         Node(const Position& pos,
@@ -73,6 +82,7 @@ namespace graph {
 
     public:
         void createNodeAt(const Direction direction) noexcept;
+        std::vector<Direction> findUnvisitedNode() const noexcept;
         std::weak_ptr<Node> getCurrent() const noexcept;
         size_t getNodeCount() const noexcept;
         Rectangle getRectangle() const noexcept;
