@@ -85,6 +85,7 @@ namespace graph {
         std::vector<Direction> findUnvisitedNode() const noexcept;
         std::weak_ptr<Node> getCurrent() const noexcept;
         size_t getNodeCount() const noexcept;
+        std::weak_ptr<Node> getPrevious() const noexcept;
         Rectangle getRectangle() const noexcept;
         void go(const Direction direction);
         bool isExplored() const noexcept;

@@ -249,6 +249,11 @@ namespace graph {
         return m_nodes.size();
     }
 
+    std::weak_ptr<Node> Graph::getPrevious() const noexcept
+    {
+        return m_previous;
+    }
+
     Rectangle Graph::getRectangle() const noexcept
     {
         return m_rectangle;
