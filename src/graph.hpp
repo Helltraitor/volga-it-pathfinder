@@ -7,32 +7,28 @@
 namespace graph {
     class Node;  // Predefinition
 
-    enum class Direction
-    {
+    enum class Direction {
         Left,
         Right,
         Up,
         Down
     };
 
-    struct Neighbor
-    {
+    struct Neighbor {
         std::weak_ptr<Node> node;
         Direction direction;
 
         Neighbor(const std::weak_ptr<Node> t_node, const Direction t_direction);
     };
 
-    struct Position
-    {
+    struct Position {
         int x;
         int y;
 
         Position(const int t_x, const int t_y);
     };
 
-    struct Rectangle
-    {
+    struct Rectangle {
         int min_x;
         int min_y;
         int max_x;
@@ -41,8 +37,7 @@ namespace graph {
         Rectangle(const int t_min_x, const int t_min_y, const int t_max_x, const int t_max_y);
     };
 
-    class Node
-    {
+    class Node {
     public:
         Node(Position pos,
              bool visited,
@@ -72,8 +67,7 @@ namespace graph {
         std::weak_ptr<Node> m_down;
     };
 
-    class Graph
-    {
+    class Graph {
     public:
         Graph(std::shared_ptr<Node> start) noexcept;
 

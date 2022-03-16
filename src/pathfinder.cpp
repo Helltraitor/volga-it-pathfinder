@@ -2,20 +2,18 @@
 #include "graph.hpp"
 #include "pathfinder.hpp"
 
-namespace pathfinder
-{
+namespace pathfinder {
     Direction directionToDirection(const graph::Direction direction) noexcept
     {
-        switch (direction)
-        {
-        case graph::Direction::Left:
-            return Direction::Left;
-        case graph::Direction::Right:
-            return Direction::Right;
-        case graph::Direction::Up:
-            return Direction::Up;
-        default:
-            return Direction::Down;
+        switch (direction) {
+            case graph::Direction::Left:
+                return Direction::Left;
+            case graph::Direction::Right:
+                return Direction::Right;
+            case graph::Direction::Up:
+                return Direction::Up;
+            default:
+                return Direction::Down;
         }
     }
 
@@ -24,14 +22,16 @@ namespace pathfinder
 
     Advice::Advice(const AdviceType t_type, const std::vector<graph::Direction> t_route) noexcept : type(t_type)
     {
-        auto advice_route = std::vector<AdviceRoute>(t_route.size());
-        for (auto direction : t_route)
-        {
+        auto advice_route = std::vector<AdviceRoute>();
+        for (auto& direction : t_route) {
             advice_route.push_back(AdviceRoute(directionToDirection(direction), direction));
         }
     }
 
-    Advice::Advice(const AdviceType t_type, const std::initializer_list<graph::Direction> t_route) noexcept : Advice(t_type, t_route) {}
+    Advice::Advice(const AdviceType t_type, const std::initializer_list<graph::Direction> t_route) noexcept
+        : Advice(t_type, std::vector<graph::Direction>(t_route))
+    {}
+
     Advice::Advice(const AdviceType t_type) noexcept : Advice(t_type, {}) {}
 
     /* Pathfinder */
@@ -39,30 +39,26 @@ namespace pathfinder
         const std::shared_ptr<Fairyland> t_world,
         const Character t_char,
         const std::shared_ptr<graph::Graph> t_graph) noexcept
-        : m_world(t_world), m_char(t_char), m_graph(t_graph) {}
+        : m_world(t_world), m_char(t_char), m_graph(t_graph)
+    {}
 
     Advice Pathfinder::getAdvice() noexcept
     {
         auto node = m_graph->getCurrent().lock();
 
         // DEADEND ADVICE
-        if (node->deadendCheck())
-        {
+        if (node->deadendCheck()) {
             // Find only one no deadend
-            for (auto& neig : node->getNeighbors())
-            {
-                if (!neig.node.expired() && !neig.node.lock()->deadendCheck())
-                {
+            for (auto& neig : node->getNeighbors()) {
+                if (!neig.node.expired() && !neig.node.lock()->deadendCheck()) {
                     return Advice(AdviceType::Move, { neig.direction });
                 }
             }
         }
 
         // VISIT UNVISITED ADVICE
-        for (auto& neig : node->getNeighbors())
-        {
-            if (!neig.node.expired() && !neig.node.lock()->m_visited)
-            {
+        for (auto& neig : node->getNeighbors()) {
+            if (!neig.node.expired() && !neig.node.lock()->m_visited) {
                 return Advice(AdviceType::Move, { neig.direction });
             }
         }
@@ -70,8 +66,7 @@ namespace pathfinder
 
     Connection Pathfinder::isConnected(const Pathfinder& other) const noexcept
     {
-        if (!m_graph->isExplored() || !other.m_graph->isExplored())
-        {
+        if (!m_graph->isExplored() || !other.m_graph->isExplored()) {
             return Connection::Unknown;
         }
         return m_graph->getNodeCount() == other.m_graph->getNodeCount()
@@ -87,10 +82,8 @@ namespace pathfinder
             graph::Direction::Down
         };
 
-        for (auto direction : directions)
-        {
-            if (m_world->canGo(m_char, directionToDirection(direction)))
-            {
+        for (auto direction : directions) {
+            if (m_world->canGo(m_char, directionToDirection(direction))) {
                 m_graph->createNodeAt(direction);
             }
         }
