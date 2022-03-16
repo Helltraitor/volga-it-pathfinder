@@ -7,7 +7,6 @@
 #include <iostream>
 #include <string>
 
-
 int main()
 {
     auto world = std::make_shared<Fairyland>();
@@ -19,7 +18,7 @@ int main()
     ivan_pathfinder.updateNode();
 
     std::cout << "Is Ivan deadend: " << ivan_graph->getCurrent().lock()->deadendCheck() << std::endl;
-    
+
     ivan_graph->normalizeRect();
     std::cout << ivan_graph->printMap('@') << std::endl;
 
@@ -35,14 +34,13 @@ int main()
     /**/
 
     std::string conn;
-    switch (ivan_pathfinder.isConnected(elena_pathfinder))
-    {
-    case pathfinder::Connection::Linked:
-        conn = "Linked";
-    case pathfinder::Connection::Divided:
-        conn = "Divided";
-    default:
-        conn = "Unknown";
+    switch (ivan_pathfinder.isConnected(elena_pathfinder)) {
+        case pathfinder::Connection::Linked:
+            conn = "Linked";
+        case pathfinder::Connection::Divided:
+            conn = "Divided";
+        default:
+            conn = "Unknown";
     }
 
     std::cout << "Connection state: " << conn << std::endl;
