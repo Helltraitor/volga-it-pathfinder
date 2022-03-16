@@ -37,10 +37,13 @@ int main()
     switch (ivan_pathfinder.isConnected(elena_pathfinder)) {
         case pathfinder::Connection::Linked:
             conn = "Linked";
+            break;
         case pathfinder::Connection::Divided:
             conn = "Divided";
+            break;
         default:
             conn = "Unknown";
+            break;
     }
 
     std::cout << "Connection state: " << conn << std::endl;
