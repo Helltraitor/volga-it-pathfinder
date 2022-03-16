@@ -39,13 +39,13 @@ namespace graph {
 
     class Node {
     public:
-        Node(Position pos,
-             bool visited,
+        Node(const Position& pos,
+             const bool visited,
              const std::weak_ptr<Node> left,
              const std::weak_ptr<Node> right,
              const std::weak_ptr<Node> up,
              const std::weak_ptr<Node> down) noexcept;
-        Node(Position pos, bool visited) noexcept;
+        Node(const Position& pos, const bool visited) noexcept;
         Node(bool visited) noexcept;
         Node() noexcept;
 
@@ -82,7 +82,7 @@ namespace graph {
         std::string printMap(const char start) const noexcept;
 
     private:
-        void updateRect(const Position pos) noexcept;
+        void updateRectangle(const Position& pos) noexcept;
 
     private:
         Rectangle m_rectangle;

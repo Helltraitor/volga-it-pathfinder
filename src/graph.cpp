@@ -40,12 +40,12 @@ namespace graph {
     }
 
     /* Node */
-    Node::Node(Position pos,
-               bool visited,
-               std::weak_ptr<Node> left,
-               std::weak_ptr<Node> right,
-               std::weak_ptr<Node> up,
-               std::weak_ptr<Node> down) noexcept
+    Node::Node(const Position& pos,
+               const bool visited,
+               const std::weak_ptr<Node> left,
+               const std::weak_ptr<Node> right,
+               const std::weak_ptr<Node> up,
+               const std::weak_ptr<Node> down) noexcept
         : m_position(pos),
         m_visited(visited),
         m_deadend(false),
@@ -68,7 +68,7 @@ namespace graph {
         }
     }
 
-    Node::Node(const Position pos, bool visited) noexcept
+    Node::Node(const Position& pos, const bool visited) noexcept
         : Node::Node(pos,
                      visited,
                      std::weak_ptr<Node>(),
@@ -193,7 +193,7 @@ namespace graph {
             target = node;
         }
         m_current.lock()->setNode(direction, m_current, target);
-        updateRect(pos);
+        updateRectangle(pos);
     }
 
     std::weak_ptr<Node> Graph::getCurrent() const noexcept
@@ -296,7 +296,7 @@ namespace graph {
     /// Takes position and set max and min values in rect. Rect has this meaning:
     /// [min x, min y; max x, max y]
     /// And it's being used for map normalization after Ivan and Elena meeting.
-    void Graph::updateRect(const Position pos) noexcept
+    void Graph::updateRectangle(const Position& pos) noexcept
     {
         if (m_rectangle.min_x > pos.x) {
             m_rectangle.min_x = pos.x;
