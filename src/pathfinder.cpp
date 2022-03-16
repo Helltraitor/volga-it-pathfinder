@@ -68,11 +68,26 @@ namespace pathfinder {
 
     Connection Pathfinder::isConnected(const Pathfinder& other) const noexcept
     {
-        if (!m_graph->isExplored() || !other.m_graph->isExplored()) {
-            return Connection::Unknown;
+        auto self_explored = m_graph->isExplored();
+        auto other_explored = other.m_graph->isExplored();
+
+        switch ((self_explored << 1) | other_explored) {
+            // False, True
+            case 1:
+                return m_graph->getNodeCount() > other.m_graph->getNodeCount()
+                    ? Connection::Divided : Connection::Unknown;
+            // True, False
+            case 2:
+                return m_graph->getNodeCount() < other.m_graph->getNodeCount()
+                    ? Connection::Divided : Connection::Unknown;
+            // True, True
+            case 3:
+                return m_graph->getNodeCount() == other.m_graph->getNodeCount()
+                    ? Connection::Linked : Connection::Divided;
+            // False, False
+            default:
+                return Connection::Unknown;
         }
-        return m_graph->getNodeCount() == other.m_graph->getNodeCount()
-            ? Connection::Linked : Connection::Divided;
     }
 
     void Pathfinder::updateNode() noexcept
