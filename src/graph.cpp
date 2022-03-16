@@ -12,7 +12,6 @@ namespace graph
         direction = t_direction;
     }
     
-
     Position::Position(const int t_x, const int t_y)
     {
         x = t_x;
@@ -193,7 +192,7 @@ namespace graph
         }
 
         std::weak_ptr<Node> target;
-        for (auto node : m_nodes)
+        for (auto& node : m_nodes)
         {
             if (pos == node->m_pos)
             {
@@ -240,7 +239,7 @@ namespace graph
 
     bool Graph::isExplored() const noexcept
     {
-        for (auto node : m_nodes)
+        for (auto& node : m_nodes)
         {
             // All nodes must be updated or some paths will leak
             if (!node->m_visited)
@@ -266,7 +265,7 @@ namespace graph
         m_rect.max_x += dif_x;
         m_rect.max_y += dif_y;
 
-        for (auto node : m_nodes)
+        for (auto& node : m_nodes)
         {
             node->m_pos.x += dif_x;
             node->m_pos.y += dif_y;
@@ -281,7 +280,7 @@ namespace graph
             *(*map + index) = '?';
         }
 
-        for (auto node : m_nodes)
+        for (auto& node : m_nodes)
         {
             auto x = node->m_pos.x;
             auto y = node->m_pos.y;

@@ -49,7 +49,7 @@ namespace pathfinder
         if (node->deadendCheck())
         {
             // Find only one no deadend
-            for (auto neig : node->getNeighbors())
+            for (auto& neig : node->getNeighbors())
             {
                 if (!neig.node.expired() && !neig.node.lock()->deadendCheck())
                 {
@@ -59,7 +59,7 @@ namespace pathfinder
         }
 
         // VISIT UNVISITED ADVICE
-        for (auto neig : node->getNeighbors())
+        for (auto& neig : node->getNeighbors())
         {
             if (!neig.node.expired() && !neig.node.lock()->m_visited)
             {
