@@ -51,9 +51,10 @@ namespace pathfinder {
 
     Advice::Advice(const AdviceType t_type, const std::vector<graph::Direction> t_route) noexcept : type(t_type)
     {
-        auto advice_route = std::vector<AdviceRoute>();
+        route = std::vector<AdviceRoute>();
+        route.reserve(t_route.size());
         for (auto& direction : t_route) {
-            advice_route.push_back(AdviceRoute(directionToDirection(direction), direction));
+            route.push_back(AdviceRoute(directionToDirection(direction), direction));
         }
     }
 

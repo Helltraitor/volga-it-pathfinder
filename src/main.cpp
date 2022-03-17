@@ -40,12 +40,12 @@ int main()
             if (elena_advice.type == pathfinder::AdviceType::Move) {
                 // Both must go until met or somebody reach spot
                 // In second case this person needs new advice
-                auto ivan_d = ivan_advice.w_route.size();
-                auto elena_d = elena_advice.w_route.size();
+                auto ivan_d = ivan_advice.route.size();
+                auto elena_d = elena_advice.route.size();
                 auto distance = ivan_d < elena_d ? ivan_d : elena_d;
 
                 for (size_t index = 0; index < distance && !meeting; ++index) {
-                    meeting = pathfinder::movePals(ivan_p, elena_p, ivan_advice.w_route[index], elena_advice.w_route[index]);
+                    meeting = pathfinder::movePals(ivan_p, elena_p, ivan_advice.route[index], elena_advice.route[index]);
                 }
                 syncronized = false;
             }
@@ -54,8 +54,8 @@ int main()
                     std::cout << "Ivan and Elena cannot meet!" << std::endl;
                     return 0;
                 }
-                for (size_t index = 0; index < ivan_advice.w_route.size() && !meeting; ++index) {
-                    meeting = pathfinder::movePals(ivan_p, ivan_advice.w_route[index]);
+                for (size_t index = 0; index < ivan_advice.route.size() && !meeting; ++index) {
+                    meeting = pathfinder::movePals(ivan_p, ivan_advice.route[index]);
                 }
                 syncronized = false;
             }
@@ -66,8 +66,8 @@ int main()
                     std::cout << "Ivan and Elena cannot meet!" << std::endl;
                     return 0;
                 }
-                for (size_t index = 0; index < elena_advice.w_route.size() && !meeting; ++index) {
-                    meeting = pathfinder::movePals(elena_p, elena_advice.w_route[index]);
+                for (size_t index = 0; index < elena_advice.route.size() && !meeting; ++index) {
+                    meeting = pathfinder::movePals(elena_p, elena_advice.route[index]);
                 }
                 syncronized = false;
             }
