@@ -115,30 +115,6 @@ namespace pathfinder {
         m_graph->getCurrent().lock()->deadendCheck();
     }
 
-    Connection Pathfinder::isConnected(const Pathfinder& other) const noexcept
-    {
-        auto self_explored = static_cast<int>(m_graph->isExplored());
-        auto other_explored = static_cast<int>(other.m_graph->isExplored());
-
-        switch ((self_explored << 1) | other_explored) {
-            // False, True
-            case 1:
-                return m_graph->getNodeCount() > other.m_graph->getNodeCount()
-                    ? Connection::Divided : Connection::Unknown;
-            // True, False
-            case 2:
-                return m_graph->getNodeCount() < other.m_graph->getNodeCount()
-                    ? Connection::Divided : Connection::Unknown;
-            // True, True
-            case 3:
-                return m_graph->getNodeCount() == other.m_graph->getNodeCount()
-                    ? Connection::Linked : Connection::Divided;
-            // False, False
-            default:
-                return Connection::Unknown;
-        }
-    }
-
     void Pathfinder::updateNode() const noexcept
     {
         const auto directions = {

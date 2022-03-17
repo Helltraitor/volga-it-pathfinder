@@ -13,12 +13,6 @@ namespace pathfinder {
         Rendezvous,  // Used when the labyrinth is explored and you ready to meet you friend.
     };
 
-    enum class Connection {
-        Linked,
-        Divided,
-        Unknown
-    };
-
     struct AdviceRoute {
         Direction world;
         graph::Direction graph;
@@ -57,7 +51,6 @@ namespace pathfinder {
         Character getCharacter() const noexcept;
         std::shared_ptr<Fairyland> getWorld() const noexcept;
         void go(const graph::Direction direction) const noexcept;
-        Connection isConnected(const Pathfinder& other) const noexcept;
         void updateNode() const noexcept;
 
     private:
