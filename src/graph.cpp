@@ -122,6 +122,10 @@ namespace graph {
         if (m_deadend) {
             return true;
         }
+        if (!m_visited) {
+            return false;
+        }
+
         int exit_count =
             static_cast<int>(!m_left.expired() && !m_left.lock()->m_deadend) +
             static_cast<int>(!m_right.expired() && !m_right.lock()->m_deadend) +
