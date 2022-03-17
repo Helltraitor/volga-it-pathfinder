@@ -15,10 +15,12 @@ int main()
     auto ivan_graph = std::make_shared<graph::Graph>(std::make_shared<graph::Node>(true));
     auto ivan_p = pathfinder::Pathfinder(world, Character::Ivan, ivan_graph);
     ivan_p.updateNode();
+    ivan_graph->getCurrent().lock()->deadendCheck();
 
     auto elena_graph = std::make_shared<graph::Graph>(std::make_shared<graph::Node>(true));
     auto elena_p = pathfinder::Pathfinder(world, Character::Elena, elena_graph);
     elena_p.updateNode();
+    elena_graph->getCurrent().lock()->deadendCheck();
     /* -------------------------------------------------------------------- */
 
     // NODES CANNOT UPDATES
@@ -27,6 +29,7 @@ int main()
 
     auto ivan_advice = ivan_p.getAdvice();
     auto elena_advice = elena_p.getAdvice();
+
     auto syncronized = true;
     auto meeting = false;
 
