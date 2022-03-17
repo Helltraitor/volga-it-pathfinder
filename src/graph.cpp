@@ -48,16 +48,29 @@ namespace graph {
         std::vector<Tadpole> passages;
         auto position = head.lock()->m_position;
         for (auto& neig : head.lock()->getNeighbors()) {
-            if (!neig.node.expired()) {
-                auto tad = Tadpole(*this);
-                tad.head = neig.node;
-                // Adding this position in nodes list (visited nodes)
-                tad.nodes.push_back(position);
-                // Adding neighbor direction because this direction is point
-                // on this node realtive to previous. This allows to construct
-                // a full path to the head.
-                tad.route.push_back(neig.direction);
+            if (neig.node.expired()) {
+                continue;
             }
+
+            bool visited = false;
+            for (auto& node : nodes) {
+                if (neig.node.lock()->m_position == node) {
+                    visited = true;
+                    break;
+                }
+            }
+            if (visited) {
+                continue;
+            }
+
+            auto tad = Tadpole(*this);
+            tad.head = neig.node;
+            tad.nodes.push_back(position);
+            // Adding neighbor direction because this direction is point
+            // on this node realtive to previous. This allows to construct
+            // a full path to the head.
+            tad.route.push_back(neig.direction);
+            passages.push_back(std::move(tad));
         }
         return passages;
     }
