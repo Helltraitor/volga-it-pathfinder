@@ -17,18 +17,18 @@ namespace graph {
         y = t_y;
     }
 
+    bool operator == (const Position& first, const Position& second)
+    {
+        return first.x == second.x
+            && first.y == second.y;
+    }
+
     Rectangle::Rectangle(const int t_min_x, const int t_min_y, const int t_max_x, const int t_max_y)
     {
         min_x = t_min_x;
         min_y = t_min_y;
         max_x = t_max_x;
         max_y = t_max_y;
-    }
-
-    bool operator == (const Position& first, const Position& second)
-    {
-        return first.x == second.x
-            && first.y == second.y;
     }
 
     bool operator == (const Rectangle& first, const Rectangle& second)
