@@ -363,6 +363,21 @@ namespace graph {
         return buffer;
     }
 
+    void Graph::resetDeadendNodes() const noexcept
+    {
+        for (auto& node : m_nodes) {
+            node->resetDeadend();
+        }
+    }
+
+    void Graph::resetVisitedNodes() const noexcept
+    {
+        for (auto& node : m_nodes) {
+            node->m_visited = false;
+        }
+        m_current.lock()->m_visited = true;
+    }
+
     /// Takes position and set max and min values in rect. Rect has this meaning:
     /// [min x, min y; max x, max y]
     /// And it's being used for map normalization after Ivan and Elena meeting.

@@ -92,6 +92,8 @@ namespace graph {
         bool isExplored() const noexcept;
         void normalizeRect() noexcept;
         std::string printMap(const char start) const noexcept;
+        void resetDeadendNodes() const noexcept;
+        void resetVisitedNodes() const noexcept;
 
     private:
         void updateRectangle(const Position& pos) noexcept;
