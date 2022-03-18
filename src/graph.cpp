@@ -76,6 +76,16 @@ namespace graph {
     }
 
     /* Node */
+    Node::Node(const Node& node) noexcept
+        : m_position(node.m_position),
+        m_visited(node.m_visited),
+        m_left(node.m_left),
+        m_right(node.m_right),
+        m_up(node.m_up),
+        m_down(node.m_down),
+        m_deadend(node.m_deadend)
+    {}
+
     Node::Node(const Position& pos,
                const bool visited,
                const std::weak_ptr<Node> left,

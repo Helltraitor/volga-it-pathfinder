@@ -48,6 +48,7 @@ namespace graph {
 
     class Node {
     public:
+        Node(const Node& node) noexcept;
         Node(const Position& pos,
              const bool visited,
              const std::weak_ptr<Node> left,
