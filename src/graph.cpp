@@ -194,6 +194,11 @@ namespace graph {
         }
     }
 
+    void Node::resetDeadend() noexcept
+    {
+        m_deadend = false;
+    }
+
     /* Graph */
     Graph::Graph(std::shared_ptr<Node> start) noexcept
         : m_start(start),
