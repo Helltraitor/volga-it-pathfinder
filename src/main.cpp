@@ -10,6 +10,7 @@
 int main()
 {
     /* -------------------------- INITIALIZATION -------------------------- */
+
     auto world = std::make_shared<Fairyland>();
 
     auto ivan_g = std::make_shared<graph::Graph>(std::make_shared<graph::Node>(true));
@@ -21,9 +22,11 @@ int main()
     auto elena_p = pathfinder::Pathfinder(world, Character::Elena, elena_g);
     elena_p.updateNode();
     elena_g->getCurrent().lock()->deadendCheck();
+    
     /* -------------------------------------------------------------------- */
     
-    /* -------------------- START OF THE MAIN ALGORITHM -------------------- */
+    /* ------------------------ THE MAIN ALGORITHM ------------------------ */
+    
     auto ivan_a = ivan_p.getAdvice();
     auto elena_a = elena_p.getAdvice();
 
@@ -53,6 +56,7 @@ int main()
                 // Rendezvous appears only if one of them is done with the explore
                 if (elena_g->getNodeCount() < ivan_g->getNodeCount() && elena_g->isExplored()) {
                     std::cout << "Ivan and Elena cannot meet!" << std::endl;
+                    std::cout << "Turn count: " << world->getTurnCount() << std::endl;
                     return 0;
                 }
                 for (size_t index = 0; index < ivan_a.route.size() && !meeting; ++index) {
@@ -66,6 +70,7 @@ int main()
             if (elena_a.type == pathfinder::AdviceType::Move) {
                 if (ivan_g->getNodeCount() < elena_g->getNodeCount() && ivan_g->isExplored()) {
                     std::cout << "Ivan and Elena cannot meet!" << std::endl;
+                    std::cout << "Turn count: " << world->getTurnCount() << std::endl;
                     return 0;
                 }
                 for (size_t index = 0; index < elena_a.route.size() && !meeting; ++index) {
@@ -83,31 +88,69 @@ int main()
 
                 if (ivan_g->getNodeCount() != elena_g->getNodeCount()) {
                     std::cout << "Ivan and Elena cannot meet!" << std::endl;
+                    std::cout << "Turn count: " << world->getTurnCount() << std::endl;
                     return 0;
                 }
 
-                // They knows they polar coords so you need only check topologic (by coords)
-                // and then one (ivan for e.g.) visit all nodes again and if he find Elena
-                // then labyrinth is connected otherwise there are two labyrinth on one map
-                break; // TODO
+                // Is more effective to visit all nodes again then do something else
+                // (linking graphs, counting coordinates and extra checks in case
+                // when the labyrinth is divided on symmetric parts)
+                ivan_g->resetDeadendNodes();
+                ivan_g->resetVisitedNodes();
+                ivan_g->getCurrent().lock()->deadendCheck();
+
+                while (!meeting) {
+                    ivan_a = ivan_p.getAdvice();
+                    if (ivan_a.type == pathfinder::AdviceType::Rendezvous) {
+                        if (!ivan_g->isExplored()) {
+                            std::cout << "Algorithm error: labyrinth are not explored but Ivan got a Rendezvous advice" << std::endl;
+                            return 0;
+                        }
+                        // For example, this could happen when the labyrinth have symmetric unlinked parts
+                        std::cout << "Ivan and Elena cannot meet!" << std::endl;
+                        std::cout << "Turn count: " << world->getTurnCount() << std::endl;
+                        return 0;
+                    }
+                    for (size_t index = 0; index < ivan_a.route.size() && !meeting; ++index) {
+                        meeting = pathfinder::movePals(ivan_p, ivan_a.route[index]);
+                    }
+                    // Possible everlasting cycle when algorithm is broken
+                    // and give move advice even when all nodes are visited
+                }
             }
         }
     }
-    /* --------------------------------------------------------------------- */
 
-    std::cout << "MEETING == " << meeting << std::endl;
-    std::cout << "IVAN NODES: " << ivan_g->getNodeCount() << std::endl;
-    std::cout << "ELENA NODES: " << elena_g->getNodeCount() << std::endl;
+    /* -------------------------------------------------------------------- */
 
-    std::cout << "Is Ivan deadend: " << ivan_g->getCurrent().lock()->deadendCheck() << std::endl;
+    /* ---------------------------- CONCLUSION ---------------------------- */
+    // At this point meeting must happened
+    std::cout << "Ivan and Elena had meet!" << std::endl;
+    std::cout << "Turn count: " << world->getTurnCount() << std::endl;
 
     ivan_g->normalizeRect();
+    elena_g->normalizeRect();
+
+    // Only two cases possible (according to the task):
+    // I. They meet at the one point
+    // II. They went through each other
+    //
+    // Task ask to give one of possible map. In first case that simple: just connect and draw.
+    // But in the second case we need to check if the general rectangle is less or equal
+    // to the labyrinth size.
+
+    // Trying to connect graphs as in walking through each other case
+    auto donor = graph::Graph(*elena_g);
+    std::cout << "same pointer, same data = "
+        << (&donor.getCurrent() == &elena_g->getCurrent()) << ", "
+        << (&*donor.getCurrent().lock() == &*(elena_g->getCurrent()).lock()) << std::endl;
+
     std::cout << ivan_g->printMap('@') << std::endl;
 
 
     std::cout << "Is Elena deadend: " << elena_g->getCurrent().lock()->deadendCheck() << std::endl;
 
-    elena_g->normalizeRect();
+    
     std::cout << elena_g->printMap('&');
     /**/
 
