@@ -210,6 +210,57 @@ namespace graph {
     }
 
     /* Graph */
+    Graph::Graph(const Graph& graph) noexcept : m_rectangle(graph.m_rectangle)
+    {
+        // Node copying
+        m_nodes.reserve(graph.m_nodes.size());
+        for (auto& node : graph.m_nodes) {
+            m_nodes.push_back(std::make_shared<Node>(*node));
+        }
+        // Node linking
+        for (auto& node : m_nodes) {
+            for (auto& neig : node->getNeighbors()) {
+                if (neig.node.expired()) {
+                    continue;
+                }
+
+                for (auto& unlinked : m_nodes) {
+                    if (neig.node.lock()->m_position == unlinked->m_position) {
+                        node->setNode(neig.direction, node, unlinked);
+                    }
+                }
+            }
+        }
+        // Graph meta restore
+        if (!graph.m_current.expired()) {
+            auto current_pos = graph.m_current.lock()->m_position;
+            for (auto& node : m_nodes) {
+                if (current_pos == node->m_position) {
+                    m_current = node;
+                    break;
+                }
+            }
+        }
+        if (!graph.m_previous.expired()) {
+            auto previous_pos = graph.m_previous.lock()->m_position;
+            for (auto& node : m_nodes) {
+                if (previous_pos == node->m_position) {
+                    m_previous = node;
+                    break;
+                }
+            }
+        }
+        if (!graph.m_start.expired()) {
+            auto start_pos = graph.m_previous.lock()->m_position;
+            for (auto& node : m_nodes) {
+                if (start_pos == node->m_position) {
+                    m_start = node;
+                    break;
+                }
+            }
+        }
+    }
+
     Graph::Graph(std::shared_ptr<Node> start) noexcept
         : m_start(start),
         m_current(start),

@@ -80,6 +80,7 @@ namespace graph {
 
     class Graph {
     public:
+        Graph(const Graph& graph) noexcept;
         Graph(std::shared_ptr<Node> start) noexcept;
 
     public:
