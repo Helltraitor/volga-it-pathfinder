@@ -84,9 +84,6 @@ namespace pathfinder {
                     return Advice(AdviceType::Move, { neig.direction });
                 }
             }
-
-            // If all deadend then all are visited, so use shortcut
-            return Advice(AdviceType::Rendezvous);
         }
 
         // VISIT UNVISITED ADVICE
