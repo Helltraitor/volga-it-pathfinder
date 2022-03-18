@@ -18,14 +18,14 @@ namespace graph {
         std::weak_ptr<Node> node;
         Direction direction;
 
-        Neighbor(const std::weak_ptr<Node> t_node, const Direction t_direction);
+        Neighbor(const std::weak_ptr<Node> t_node, const Direction t_direction) noexcept;
     };
 
     struct Position {
         int x;
         int y;
 
-        Position(const int t_x, const int t_y);
+        Position(const int t_x, const int t_y) noexcept;
     };
 
     struct Rectangle {
@@ -34,7 +34,7 @@ namespace graph {
         int max_x;
         int max_y;
 
-        Rectangle(const int t_min_x, const int t_min_y, const int t_max_x, const int t_max_y);
+        Rectangle(const int t_min_x, const int t_min_y, const int t_max_x, const int t_max_y) noexcept;
     };
 
     struct Tadpole {

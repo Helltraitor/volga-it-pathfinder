@@ -5,13 +5,13 @@
 
 namespace graph {
     /* Structs */
-    Neighbor::Neighbor(const std::weak_ptr<Node> t_node, const Direction t_direction)
+    Neighbor::Neighbor(const std::weak_ptr<Node> t_node, const Direction t_direction) noexcept
     {
         node = t_node;
         direction = t_direction;
     }
 
-    Position::Position(const int t_x, const int t_y)
+    Position::Position(const int t_x, const int t_y) noexcept
     {
         x = t_x;
         y = t_y;
@@ -23,7 +23,7 @@ namespace graph {
             && first.y == second.y;
     }
 
-    Rectangle::Rectangle(const int t_min_x, const int t_min_y, const int t_max_x, const int t_max_y)
+    Rectangle::Rectangle(const int t_min_x, const int t_min_y, const int t_max_x, const int t_max_y) noexcept
     {
         min_x = t_min_x;
         min_y = t_min_y;
