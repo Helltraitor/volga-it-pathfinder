@@ -93,6 +93,7 @@ namespace graph {
         Rectangle getRectangle() const noexcept;
         void go(const Direction direction);
         bool isExplored() const noexcept;
+        bool isIntersectedWith(const Graph& graph) const noexcept;
         void normalizeRect() noexcept;
         std::string printMap(const char start) const noexcept;
         void resetDeadendNodes() const noexcept;

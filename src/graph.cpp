@@ -354,11 +354,32 @@ namespace graph {
         return true;
     }
 
+    bool Graph::isIntersectedWith(const Graph& graph) const noexcept
     {
+        auto t_passages = getPassagesPositions();
+        auto t_walls = getWallsPositions();
 
+        auto o_passages = graph.getPassagesPositions();
+        auto o_walls = graph.getWallsPositions();
 
+        std::vector<Position> passages;
+        passages.reserve(t_passages.size() + o_passages.size());
+        passages.insert(passages.end(), t_passages.begin(), t_passages.end());
+        passages.insert(passages.end(), o_passages.begin(), o_passages.end());
 
+        std::vector<Position> walls;
+        walls.reserve(t_walls.size() + o_walls.size());
+        walls.insert(walls.end(), t_walls.begin(), t_walls.end());
+        walls.insert(walls.end(), o_walls.begin(), o_walls.end());
+
+        for (auto& passage : passages) {
+            for (auto& wall : walls) {
+                if (passage == wall) {
+                    return true;
+                }
+            }
         }
+        return false;
     }
 
     std::string Graph::printMap(const char start) const noexcept
