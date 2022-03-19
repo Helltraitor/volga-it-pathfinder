@@ -428,6 +428,23 @@ namespace graph {
         m_current.lock()->m_visited = true;
     }
 
+    void Graph::shiftRect(const int delta_x, const int delta_y) noexcept
+    {
+        if (delta_x == 0 && delta_y == 0) {
+            return;
+        }
+
+        m_rectangle.min_x += delta_x;
+        m_rectangle.min_y += delta_y;
+        m_rectangle.max_x += delta_x;
+        m_rectangle.max_y += delta_y;
+
+        for (auto& node : m_nodes) {
+            node->m_position.x += delta_x;
+            node->m_position.y += delta_y;
+        }
+    }
+
     /// Takes position and set max and min values in rect. Rect has this meaning:
     /// [min x, min y; max x, max y]
     /// And it's being used for map normalization after Ivan and Elena meeting.

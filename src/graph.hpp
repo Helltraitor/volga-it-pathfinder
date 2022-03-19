@@ -97,6 +97,7 @@ namespace graph {
         std::string printMap(const char start) const noexcept;
         void resetDeadendNodes() const noexcept;
         void resetVisitedNodes() const noexcept;
+        void shiftRect(const int delta_x, const int delta_y) noexcept;
 
     private:
         void updateRectangle(const Position& pos) noexcept;
