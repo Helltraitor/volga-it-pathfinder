@@ -354,27 +354,20 @@ namespace graph {
         return true;
     }
 
-    void Graph::normalizeRect() noexcept
     {
-        int dif_x = -m_rectangle.min_x;
-        int dif_y = -m_rectangle.min_y;
 
-        if (dif_x == 0 && dif_y == 0) {
-            return;
-        }
 
-        m_rectangle.min_x += dif_x;
-        m_rectangle.min_y += dif_y;
-        m_rectangle.max_x += dif_x;
-        m_rectangle.max_y += dif_y;
 
-        for (auto& node : m_nodes) {
-            node->m_position.x += dif_x;
-            node->m_position.y += dif_y;
         }
     }
 
     std::string Graph::printMap(const char start) const noexcept
+    void Graph::normalizeRect() noexcept
+    {
+        shiftRect(-m_rectangle.min_x, -m_rectangle.min_y);
+    }
+
+    std::string Graph::printMap(const char start, const char previous, const char current) const noexcept
     {
         char map[10][10] = {};
         memset((char*)map, '?', 100);
