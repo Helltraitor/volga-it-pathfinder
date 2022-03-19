@@ -382,7 +382,6 @@ namespace graph {
         return false;
     }
 
-    std::string Graph::printMap(const char start) const noexcept
     void Graph::normalizeRect() noexcept
     {
         shiftRect(-m_rectangle.min_x, -m_rectangle.min_y);
@@ -416,6 +415,8 @@ namespace graph {
             }
         }
         map[m_start.lock()->m_position.y][m_start.lock()->m_position.x] = int(start);
+        map[m_previous.lock()->m_position.y][m_previous.lock()->m_position.x] = int(previous);
+        map[m_current.lock()->m_position.y][m_current.lock()->m_position.x] = int(current);
 
         std::string buffer;
         for (int y = 9; y > -1; --y) {

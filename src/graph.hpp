@@ -95,7 +95,7 @@ namespace graph {
         bool isExplored() const noexcept;
         bool isIntersectedWith(const Graph& graph) const noexcept;
         void normalizeRect() noexcept;
-        std::string printMap(const char start) const noexcept;
+        std::string printMap(const char start, const char previous, const char current) const noexcept;
         void resetDeadendNodes() const noexcept;
         void resetVisitedNodes() const noexcept;
         void shiftRect(const int delta_x, const int delta_y) noexcept;
