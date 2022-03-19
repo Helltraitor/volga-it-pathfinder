@@ -460,6 +460,50 @@ namespace graph {
         }
     }
 
+    std::string Graph::drawMap(const Graph& graph, const char this_start, const char other_start) noexcept
+    {
+        char map[10][10] = {};
+        memset((char*)map, '?', 100);
+
+        for (auto& passage : getPassagesPositions()) {
+            map[passage.y][passage.x] = '.';
+        }
+
+        for (auto& passage : graph.getPassagesPositions()) {
+            map[passage.y][passage.x] = '.';
+        }
+
+        for (auto& wall : getWallsPositions()) {
+            // Walls can be border of the labyrinth that can't be draw in 10x10 map
+            if (wall.x > 9 || wall.x < 0 || wall.y > 9 || wall.y < 0) {
+                continue;
+            }
+            map[wall.y][wall.x] = '#';
+        }
+
+        for (auto& wall : graph.getWallsPositions()) {
+            if (wall.x > 9 || wall.x < 0 || wall.y > 9 || wall.y < 0) {
+                continue;
+            }
+            map[wall.y][wall.x] = '#';
+        }
+
+        auto this_start_pos = m_start.lock()->m_position;
+        map[this_start_pos.y][this_start_pos.x] = this_start;
+
+        auto other_start_pos = graph.m_start.lock()->m_position;
+        map[other_start_pos.y][other_start_pos.x] = other_start;
+
+        std::string sheet;
+        for (int y = 9; y > -1; --y) {
+            for (int x = 0; x < 10; ++x) {
+                sheet.push_back(map[y][x]);
+            }
+            sheet.push_back('\n');
+        }
+        return sheet;
+    }
+
     /// Takes position and set max and min values in rect. Rect has this meaning:
     /// [min x, min y; max x, max y]
     /// And it's being used for map normalization after Ivan and Elena meeting.

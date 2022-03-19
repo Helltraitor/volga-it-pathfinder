@@ -101,6 +101,7 @@ namespace graph {
         void shiftRect(const int delta_x, const int delta_y) noexcept;
 
     private:
+        std::string drawMap(const Graph& graph, const char this_start, const char other_start) noexcept;
         void updateRectangle(const Position& pos) noexcept;
 
     private:
