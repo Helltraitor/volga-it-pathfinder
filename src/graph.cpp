@@ -281,6 +281,16 @@ namespace graph {
         return m_nodes.size();
     }
 
+    std::vector<Position> Graph::getPassagesPositions() const noexcept
+    {
+        std::vector<Position> passages;
+        passages.reserve(m_nodes.size());
+        for (auto& node : m_nodes) {
+            passages.push_back(node->m_position);
+        }
+        return passages;
+    }
+
     std::weak_ptr<Node> Graph::getPrevious() const noexcept
     {
         return m_previous;
