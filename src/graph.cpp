@@ -296,6 +296,36 @@ namespace graph {
         return m_previous;
     }
 
+    std::vector<Position> Graph::getWallsPositions() const noexcept
+    {
+        std::vector<Position> walls;
+        walls.reserve(m_nodes.size() * 4);
+        for (auto& node : m_nodes) {
+            for (auto& neig : node->getNeighbors()) {
+                if (!neig.node.expired()) {
+                    continue;
+                }
+                auto pos = node->m_position;
+                switch (neig.direction) {
+                    case Direction::Left:
+                        pos.x -= 1;
+                        break;
+                    case Direction::Right:
+                        pos.x += 1;
+                        break;
+                    case Direction::Up:
+                        pos.y += 1;
+                        break;
+                    case Direction::Down:
+                        pos.y -= 1;
+                        break;
+                }
+                walls.push_back(pos);
+            }
+        }
+        return walls;
+    }
+
     Rectangle Graph::getRectangle() const noexcept
     {
         return m_rectangle;

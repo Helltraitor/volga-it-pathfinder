@@ -89,6 +89,7 @@ namespace graph {
         size_t getNodeCount() const noexcept;
         std::vector<Position> getPassagesPositions() const noexcept;
         std::weak_ptr<Node> getPrevious() const noexcept;
+        std::vector<Position> getWallsPositions() const noexcept;
         Rectangle getRectangle() const noexcept;
         void go(const Direction direction);
         bool isExplored() const noexcept;
