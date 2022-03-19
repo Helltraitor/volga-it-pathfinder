@@ -87,9 +87,11 @@ namespace pathfinder {
         }
 
         // VISIT UNVISITED ADVICE
-        auto route = m_graph->findUnvisitedNode();
-        if (!route.empty()) {
-            return Advice(AdviceType::Move, route);
+        if (!m_graph->isExplored()) {
+            auto route = m_graph->findUnvisitedNode();
+            if (!route.empty()) {
+                return Advice(AdviceType::Move, route);
+            }
         }
 
         return Advice(AdviceType::Rendezvous);
