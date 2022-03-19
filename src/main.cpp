@@ -128,9 +128,6 @@ int main()
     std::cout << "Ivan and Elena had meet!" << std::endl;
     std::cout << "Turn count: " << world->getTurnCount() << std::endl;
 
-    ivan_g->normalizeRect();
-    elena_g->normalizeRect();
-
     // Only two cases possible (according to the task):
     // I. They meet at the one point
     // II. They went through each other
@@ -139,20 +136,19 @@ int main()
     // But in the second case we need to check if the general rectangle is less or equal
     // to the labyrinth size.
 
-    // Trying to connect graphs as in walking through each other case
-    auto donor = graph::Graph(*elena_g);
-    std::cout << "same pointer, same data = "
-        << (&donor.getCurrent() == &elena_g->getCurrent()) << ", "
-        << (&*donor.getCurrent().lock() == &*(elena_g->getCurrent()).lock()) << std::endl;
+    // Restoring map is relative operation, so I belive (I cannot check everything)
+    // that some maps could be lost, so I put check in order to take lost map variants
+    // realtive to elena. And if elena also doens't have these variants then my algorithm
+    // cannot display such map
 
-    std::cout << ivan_g->printMap('@') << std::endl;
-
-
-    std::cout << "Is Elena deadend: " << elena_g->getCurrent().lock()->deadendCheck() << std::endl;
-
-    
-    std::cout << elena_g->printMap('&');
-    /**/
-
+    auto sheet = ivan_g->restoreMap(*elena_g, '@', '&');
+    if (sheet.empty()) {
+        sheet = elena_g->restoreMap(*ivan_g, '&', '@');
+    }
+    if (sheet.empty()) {
+        std::cout << "Restore map error: This algorithm cannot restore map for this case" << std::endl;
+        return 0;
+    }
+    std::cout << sheet << std::endl;
     return 0;
 }
