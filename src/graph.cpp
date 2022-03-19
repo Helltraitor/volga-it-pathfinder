@@ -443,6 +443,65 @@ namespace graph {
         m_current.lock()->m_visited = true;
     }
 
+    std::string Graph::restoreMap(Graph& graph, const char this_start, const char other_start) noexcept
+    {
+        // TODO: CHECK RECT MIN MAX VALUE AFTER SHIFT
+
+        normalizeRect();
+        graph.normalizeRect();
+
+        auto this_cn_spot = m_current.lock()->m_position;
+        auto this_rectangle = m_rectangle;
+
+        auto other_cn_spot = graph.m_current.lock()->m_position;
+        auto other_rectangle = graph.m_rectangle;
+
+        // Possible spot for centering map
+        auto cn_invariants = {
+            this_cn_spot,                                  // Center
+            Position(this_cn_spot.x - 1, this_cn_spot.y),  // Left-center
+            Position(this_cn_spot.x + 1, this_cn_spot.y),  // Right-center
+            Position(this_cn_spot.x, this_cn_spot.y + 1),  // Up-center
+            Position(this_cn_spot.x, this_cn_spot.y - 1)   // Down-center
+        };
+        for (auto& cn_spot : cn_invariants) {
+            normalizeRect();
+            graph.normalizeRect();
+
+            auto delta_x = cn_spot.x - other_cn_spot.x;
+            auto delta_y = cn_spot.y - other_cn_spot.y;
+
+            // If delta more then 0 then move other graph else move this graph
+            // that will help align map at (0;0)
+
+            auto this_delta_x = delta_x < 0 ? -delta_x : 0;
+            auto this_delta_y = delta_y < 0 ? -delta_y : 0;
+            auto other_delta_x = delta_x > 0 ? delta_x : 0;
+            auto other_delta_y = delta_y > 0 ? delta_y : 0;
+
+            shiftRect(this_delta_x, this_delta_y);
+            graph.shiftRect(other_delta_x, other_delta_y);
+
+            auto this_rect = m_rectangle;
+            auto other_rect = graph.m_rectangle;
+
+            // These rects can be out of bounds, in that case connection spot is wrong
+            if (this_rect.max_x > 9 ||
+                this_rect.max_y > 9 ||
+                other_rect.max_x > 9 ||
+                other_rect.max_y > 9) {
+                continue;
+            }
+
+            if (isIntersectedWith(graph)) {
+                continue;
+            }
+
+            return drawMap(graph, this_start, other_start);
+        }
+        return std::string();
+    }
+
     void Graph::shiftRect(const int delta_x, const int delta_y) noexcept
     {
         if (delta_x == 0 && delta_y == 0) {

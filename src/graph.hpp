@@ -98,6 +98,7 @@ namespace graph {
         std::string printMap(const char start, const char previous, const char current) const noexcept;
         void resetDeadendNodes() const noexcept;
         void resetVisitedNodes() const noexcept;
+        std::string restoreMap(Graph& graph, const char this_start, const char other_start) noexcept;
         void shiftRect(const int delta_x, const int delta_y) noexcept;
 
     private:
