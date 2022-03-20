@@ -208,11 +208,57 @@ namespace graph {
             }
         }
         if (target.expired()) {
-            auto node = std::make_shared<Node>();
+            auto node = std::make_shared<Node>(pos, false);
             m_nodes.push_back(node);
             target = node;
         }
-        m_current.lock()->setNode(direction, m_current, target);
+
+        // Link relative to target node
+        // This need because target may exists at another existing node
+        // and connection relative to this node will not connect target
+        // with another nodes.
+
+        auto updated_node = target.lock();
+        auto neighbors = updated_node->getNeighbors();
+
+        auto lt_node_expired = neighbors[0].node.expired();
+        auto lt_node_pos = pos.at(Direction::Left);
+
+        auto rt_node_expired = neighbors[1].node.expired();
+        auto rt_node_pos = pos.at(Direction::Right);
+
+        auto up_node_expired = neighbors[2].node.expired();
+        auto up_node_pos = pos.at(Direction::Up);
+
+        auto dn_node_expired = neighbors[3].node.expired();
+        auto dn_node_pos = pos.at(Direction::Down);
+
+        for (auto& node : m_nodes) {
+            if (lt_node_expired && lt_node_pos == node->m_position) {
+                updated_node->m_left = node;
+                node->m_right = updated_node;
+                lt_node_expired = false;
+            }
+            else if (rt_node_expired && rt_node_pos == node->m_position) {
+                updated_node->m_right = node;
+                node->m_left = updated_node;
+                rt_node_expired = false;
+            }
+            else if (up_node_expired && up_node_pos == node->m_position) {
+                updated_node->m_up = node;
+                node->m_down = updated_node;
+                up_node_expired = false;
+            }
+            else if (dn_node_expired && dn_node_pos == node->m_position) {
+                updated_node->m_down = node;
+                node->m_up = updated_node;
+                dn_node_expired = false;
+            }
+            else if (!(lt_node_expired || rt_node_expired || up_node_expired || dn_node_expired)) {
+                // Node updating is over
+                break;
+            }
+        }
         updateRectangle(pos);
     }
 
