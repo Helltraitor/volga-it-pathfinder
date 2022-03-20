@@ -318,8 +318,6 @@ namespace graph {
             throw std::runtime_error(
                 "Current node is expired or equals nullptr_t. This occurred because this node wasn't updated");
         }
-
-        m_previous = m_current;
         m_current = m_current.lock()->getNode(direction);
         m_current.lock()->m_visited = true;
     }
