@@ -6,10 +6,8 @@
 namespace graph {
     /* Structs */
     Neighbor::Neighbor(const std::weak_ptr<Node> t_node, const Direction t_direction) noexcept
-    {
-        node = t_node;
-        direction = t_direction;
-    }
+        : node(t_node), direction(t_direction)
+    {}
 
     Position::Position(const int t_x, const int t_y) noexcept
     {
