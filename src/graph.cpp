@@ -65,7 +65,7 @@ namespace graph {
 
             auto tad = Tadpole(*this);
             tad.head = neig.node;
-            tad.nodes.push_back(position);
+            tad.nodes.push_back(pos);
             // Adding neighbor direction because this direction is point
             // on this node realtive to previous. This allows to construct
             // a full path to the head.
@@ -206,8 +206,11 @@ namespace graph {
         // and connection relative to this node will not connect target
         // with another nodes.
 
-        auto updated_node = target.lock();
-        auto neighbors = updated_node->getNeighbors();
+        // This is a flat version of the linking algorithm which works
+        // with O(n) complexity.
+
+        const auto updated_node = target.lock();
+        const auto neighbors = updated_node->getNeighbors();
 
         auto lt_node_expired = neighbors[0].node.expired();
         const auto lt_node_pos = pos.at(Direction::Left);
