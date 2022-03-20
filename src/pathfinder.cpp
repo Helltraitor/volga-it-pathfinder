@@ -3,7 +3,8 @@
 #include "pathfinder.hpp"
 
 namespace pathfinder {
-    // Converts graph direction enum into fairytail version. Cannot returns Pass variant
+    /* Funtions */
+
     Direction directionToDirection(const graph::Direction direction) noexcept
     {
         switch (direction) {
@@ -18,8 +19,6 @@ namespace pathfinder {
         }
     }
 
-    // Moves pals in the world and in the graph using `Pathfinder::go` method. This overload moves only
-    // `pathfinder.getCharacter()` person and makes another to pass.
     bool movePals(
         const Pathfinder& pathfinder,
         const AdviceRoute& advice_route
@@ -36,7 +35,6 @@ namespace pathfinder {
         return meeting;
     }
 
-    // Moves pals in the world and in the graph using `Pathfinder::go` method. This overload moves both pals.
     bool movePals(
         const Pathfinder& ivan_p,
         const Pathfinder& elena_p,
@@ -51,11 +49,11 @@ namespace pathfinder {
     }
 
     /* AdviceRoute */
-    // Represents routes relative the world and the graph which must be applied to reach some node
+
     AdviceRoute::AdviceRoute(const Direction t_world, const graph::Direction t_graph) noexcept : world(t_world), graph(t_graph) {}
 
     /* Advice */
-    // Represent given advice by `Pathfinder::getAdvice` method
+
     Advice::Advice(const AdviceType t_type, const std::vector<graph::Direction>& t_route) noexcept : type(t_type)
     {
         route = std::vector<AdviceRoute>();
@@ -72,6 +70,7 @@ namespace pathfinder {
     Advice::Advice(const AdviceType t_type) noexcept : Advice(t_type, {}) {}
 
     /* Pathfinder */
+
     Pathfinder::Pathfinder(
         const std::shared_ptr<Fairyland> t_world,
         const Character t_char,
@@ -79,7 +78,6 @@ namespace pathfinder {
         : m_world(t_world), m_character(t_char), m_graph(t_graph)
     {}
 
-    // Returns an advice according to current situation in the labyrinth
     Advice Pathfinder::getAdvice() const noexcept
     {
         // For meeting in the labyrinth only one plan exists:
@@ -101,7 +99,8 @@ namespace pathfinder {
         // 
         // Then two variants exits:
         // 1. You have two equal labyrinth which are not connected. - Good case
-        // 2. You have symmetric labyrinth. - Ass tear case
+        // 2. You have symmetric labyrinth. - Ass tear case that probably impossible
+        //     in that task variant
         // 
         //     In the first case only one way to restore map exists. So you can
         // know here and know that game is over. But in the second case you need
@@ -134,19 +133,16 @@ namespace pathfinder {
         return Advice(AdviceType::Rendezvous);
     }
 
-    // Returns fairytail character which used this pathfinder to reach pal
     Character Pathfinder::getCharacter() const noexcept
     {
         return m_character;
     }
 
-    // Returns fairytail world where person tries to find the pal
     std::shared_ptr<Fairyland> Pathfinder::getWorld() const noexcept
     {
         return m_world;
     }
-    // Moves the pal in the indicated direction in the graph, also updates node. Normally must be used through
-    // the `movePals` function
+    
     void Pathfinder::go(const graph::Direction direction) const noexcept
     {
         m_graph->go(direction);
@@ -154,8 +150,6 @@ namespace pathfinder {
         m_graph->getCurrent().lock()->deadendCheck();
     }
 
-    // Updates node using `Graph::createNodeAt` and `Fairyland::canGo`. Must be used after every pals move.
-    // Normally must be used through the `Pathfinder::go` method
     void Pathfinder::updateNode() const noexcept
     {
         const auto directions = {
