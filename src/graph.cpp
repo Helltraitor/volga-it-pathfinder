@@ -17,6 +17,20 @@ namespace graph {
         y = t_y;
     }
 
+    Position Position::at(const Direction direction) const noexcept
+    {
+        switch (direction) {
+            case Direction::Left:
+                return Position(x - 1, y);
+            case Direction::Right:
+                return Position(x + 1, y);
+            case Direction::Up:
+                return Position(x, y + 1);
+            default:
+                return Position(x, y - 1);
+        }
+    }
+
     bool operator == (const Position& first, const Position& second)
     {
         return first.x == second.x
@@ -220,21 +234,7 @@ namespace graph {
 
     void Graph::createNodeAt(const Direction direction) noexcept
     {
-        auto pos = m_current.lock()->m_position;
-        switch (direction) {
-            case Direction::Left:
-                pos.x -= 1;
-                break;
-            case Direction::Right:
-                pos.x += 1;
-                break;
-            case Direction::Up:
-                pos.y += 1;
-                break;
-            case Direction::Down:
-                pos.y -= 1;
-                break;
-        }
+        auto pos = m_current.lock()->m_position.at(direction);
 
         std::weak_ptr<Node> target;
         for (auto& node : m_nodes) {
@@ -305,22 +305,7 @@ namespace graph {
                 if (!neig.node.expired()) {
                     continue;
                 }
-                auto pos = node->m_position;
-                switch (neig.direction) {
-                    case Direction::Left:
-                        pos.x -= 1;
-                        break;
-                    case Direction::Right:
-                        pos.x += 1;
-                        break;
-                    case Direction::Up:
-                        pos.y += 1;
-                        break;
-                    case Direction::Down:
-                        pos.y -= 1;
-                        break;
-                }
-                walls.push_back(pos);
+                walls.push_back(node->m_position.at(neig.direction));
             }
         }
         return walls;

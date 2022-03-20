@@ -26,6 +26,7 @@ namespace graph {
         int y;
 
         Position(const int t_x, const int t_y) noexcept;
+        Position at(const Direction direction) const noexcept;
     };
 
     struct Rectangle {
