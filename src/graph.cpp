@@ -372,47 +372,6 @@ namespace graph {
         shiftRect(-m_rectangle.min_x, -m_rectangle.min_y);
     }
 
-    std::string Graph::printMap(const char start, const char previous, const char current) const noexcept
-    {
-        char map[10][10] = {};
-        memset((char*)map, '?', 100);
-
-        for (auto& node : m_nodes) {
-            auto x = node->m_position.x;
-            auto y = node->m_position.y;
-            map[y][x] = '.';
-
-            if (!node->m_visited) {
-                continue;
-            }
-
-            if (x > 0 && node->getNode(Direction::Left).expired()) {
-                map[y][x - 1] = '#';
-            }
-            if (x < 9 && node->getNode(Direction::Right).expired()) {
-                map[y][x + 1] = '#';
-            }
-            if (y < 9 && node->getNode(Direction::Up).expired()) {
-                map[y + 1][x] = '#';
-            }
-            if (y > 0 && node->getNode(Direction::Down).expired()) {
-                map[y - 1][x] = '#';
-            }
-        }
-        map[m_start.lock()->m_position.y][m_start.lock()->m_position.x] = int(start);
-        map[m_previous.lock()->m_position.y][m_previous.lock()->m_position.x] = int(previous);
-        map[m_current.lock()->m_position.y][m_current.lock()->m_position.x] = int(current);
-
-        std::string buffer;
-        for (int y = 9; y > -1; --y) {
-            for (int x = 0; x < 10; ++x) {
-                buffer.push_back(map[y][x]);
-            }
-            buffer.push_back('\n');
-        }
-        return buffer;
-    }
-
     void Graph::resetDeadendNodes() const noexcept
     {
         for (auto& node : m_nodes) {
