@@ -69,13 +69,13 @@ namespace graph {
     public:
         Position m_position;
         bool m_visited;
-
-    private:
-        bool m_deadend;
         std::weak_ptr<Node> m_left;
         std::weak_ptr<Node> m_right;
         std::weak_ptr<Node> m_up;
         std::weak_ptr<Node> m_down;
+
+    private:
+        bool m_deadend;
     };
 
     class Graph {
