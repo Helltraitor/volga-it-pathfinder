@@ -24,8 +24,8 @@ namespace pathfinder {
         AdviceType type;
         std::vector<AdviceRoute> route;
 
-        Advice(const AdviceType t_type, const std::vector<graph::Direction> t_route) noexcept;
-        Advice(const AdviceType t_type, const std::initializer_list<graph::Direction> t_route) noexcept;
+        Advice(const AdviceType t_type, const std::vector<graph::Direction>& t_route) noexcept;
+        Advice(const AdviceType t_type, const std::initializer_list<graph::Direction>& t_route) noexcept;
         Advice(const AdviceType t_type) noexcept;
     };
 

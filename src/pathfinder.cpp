@@ -40,7 +40,7 @@ namespace pathfinder {
         const AdviceRoute& elena_ar
     ) noexcept
     {
-        auto meeting = ivan_p.getWorld()->go(ivan_ar.world, elena_ar.world);
+        const auto meeting = ivan_p.getWorld()->go(ivan_ar.world, elena_ar.world);
         ivan_p.go(ivan_ar.graph);
         elena_p.go(elena_ar.graph);
         return meeting;
@@ -53,12 +53,12 @@ namespace pathfinder {
     {
         route = std::vector<AdviceRoute>();
         route.reserve(t_route.size());
-        for (auto& direction : t_route) {
+        for (const auto& direction : t_route) {
             route.push_back(AdviceRoute(directionToDirection(direction), direction));
         }
     }
 
-    Advice::Advice(const AdviceType t_type, const std::initializer_list<graph::Direction> t_route) noexcept
+    Advice::Advice(const AdviceType t_type, const std::initializer_list<graph::Direction>& t_route) noexcept
         : Advice(t_type, std::vector<graph::Direction>(t_route))
     {}
 
@@ -105,10 +105,10 @@ namespace pathfinder {
         //
 
         // DEADEND ADVICE
-        auto node = m_graph->getCurrent().lock();
+        const auto node = m_graph->getCurrent().lock();
         if (node->deadendCheck()) {
             // Find only one no deadend
-            for (auto& neig : node->getNeighbors()) {
+            for (const auto& neig : node->getNeighbors()) {
                 if (!neig.node.expired() && !neig.node.lock()->deadendCheck()) {
                     return Advice(AdviceType::Move, { neig.direction });
                 }
@@ -117,7 +117,7 @@ namespace pathfinder {
 
         // VISIT UNVISITED ADVICE
         if (!m_graph->isExplored()) {
-            auto route = m_graph->findUnvisitedNode();
+            const auto route = m_graph->findUnvisitedNode();
             if (!route.empty()) {
                 return Advice(AdviceType::Move, route);
             }
@@ -152,7 +152,7 @@ namespace pathfinder {
             graph::Direction::Down
         };
 
-        for (auto direction : directions) {
+        for (const auto& direction : directions) {
             if (m_world->canGo(m_character, directionToDirection(direction))) {
                 m_graph->createNodeAt(direction);
             }

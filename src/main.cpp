@@ -9,15 +9,15 @@ int main()
 {
     /* -------------------------- INITIALIZATION -------------------------- */
 
-    auto world = std::make_shared<Fairyland>();
+    const auto world = std::make_shared<Fairyland>();
 
-    auto ivan_g = std::make_shared<graph::Graph>(std::make_shared<graph::Node>(true));
-    auto ivan_p = pathfinder::Pathfinder(world, Character::Ivan, ivan_g);
+    const auto ivan_g = std::make_shared<graph::Graph>(std::make_shared<graph::Node>(true));
+    const auto ivan_p = pathfinder::Pathfinder(world, Character::Ivan, ivan_g);
     ivan_p.updateNode();
     ivan_g->getCurrent().lock()->deadendCheck();
 
-    auto elena_g = std::make_shared<graph::Graph>(std::make_shared<graph::Node>(true));
-    auto elena_p = pathfinder::Pathfinder(world, Character::Elena, elena_g);
+    const auto elena_g = std::make_shared<graph::Graph>(std::make_shared<graph::Node>(true));
+    const auto elena_p = pathfinder::Pathfinder(world, Character::Elena, elena_g);
     elena_p.updateNode();
     elena_g->getCurrent().lock()->deadendCheck();
     
@@ -41,9 +41,9 @@ int main()
             if (elena_a.type == pathfinder::AdviceType::Move) {
                 // Both must go until met or somebody reach spot
                 // In second case this person needs new advice
-                auto ivan_d = ivan_a.route.size();
-                auto elena_d = elena_a.route.size();
-                auto distance = ivan_d < elena_d ? ivan_d : elena_d;
+                const auto ivan_d = ivan_a.route.size();
+                const auto elena_d = elena_a.route.size();
+                const auto distance = ivan_d < elena_d ? ivan_d : elena_d;
 
                 for (size_t index = 0; index < distance && !meeting; ++index) {
                     meeting = pathfinder::movePals(ivan_p, elena_p, ivan_a.route[index], elena_a.route[index]);

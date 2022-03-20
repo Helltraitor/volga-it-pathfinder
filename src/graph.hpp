@@ -43,7 +43,10 @@ namespace graph {
         std::vector<Position> nodes;
         std::weak_ptr<Node> head;
 
-        Tadpole(const std::vector<Direction> t_route, const std::vector<Position> t_nodes, std::weak_ptr<Node> t_head) noexcept;
+        Tadpole(
+            const std::vector<Direction> t_route,
+            const std::vector<Position> t_nodes,
+            const std::weak_ptr<Node> t_head) noexcept;
         std::vector<Tadpole> produceTadpole() const noexcept;
     };
 
@@ -57,7 +60,7 @@ namespace graph {
              const std::weak_ptr<Node> up,
              const std::weak_ptr<Node> down) noexcept;
         Node(const Position& pos, const bool visited) noexcept;
-        Node(bool visited) noexcept;
+        Node(const bool visited) noexcept;
         Node() noexcept;
 
     public:

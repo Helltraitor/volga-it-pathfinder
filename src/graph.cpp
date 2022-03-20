@@ -36,21 +36,24 @@ namespace graph {
         : min_x(t_min_x), min_y(t_min_y), max_x(t_max_x), max_y(t_max_y)
     {}
 
-    Tadpole::Tadpole(const std::vector<Direction> t_route, const std::vector<Position> t_nodes, std::weak_ptr<Node> t_head) noexcept
+    Tadpole::Tadpole(
+        const std::vector<Direction> t_route,
+        const std::vector<Position> t_nodes,
+        const std::weak_ptr<Node> t_head) noexcept
         : route(t_route), nodes(t_nodes), head(t_head)
     {}
 
     std::vector<Tadpole> Tadpole::produceTadpole() const noexcept
     {
         std::vector<Tadpole> passages;
-        auto position = head.lock()->m_position;
-        for (auto& neig : head.lock()->getNeighbors()) {
+        const auto pos = head.lock()->m_position;
+        for (const auto& neig : head.lock()->getNeighbors()) {
             if (neig.node.expired()) {
                 continue;
             }
 
             bool visited = false;
-            for (auto& node : nodes) {
+            for (const auto& node : nodes) {
                 if (neig.node.lock()->m_position == node) {
                     visited = true;
                     break;
@@ -120,7 +123,7 @@ namespace graph {
                      std::weak_ptr<Node>())
     {}
 
-    Node::Node(bool visited) noexcept : Node::Node(Position(0, 0), visited) {}
+    Node::Node(const bool visited) noexcept : Node::Node(Position(0, 0), visited) {}
 
     Node::Node() noexcept : Node::Node(false) {}
 
@@ -133,7 +136,7 @@ namespace graph {
             return false;
         }
 
-        int exit_count =
+        const int exit_count =
             static_cast<int>(!m_left.expired() && !m_left.lock()->m_deadend) +
             static_cast<int>(!m_right.expired() && !m_right.lock()->m_deadend) +
             static_cast<int>(!m_up.expired() && !m_up.lock()->m_deadend) +
@@ -184,16 +187,16 @@ namespace graph {
 
     void Graph::createNodeAt(const Direction direction) noexcept
     {
-        auto pos = m_current.lock()->m_position.at(direction);
+        const auto pos = m_current.lock()->m_position.at(direction);
 
         std::weak_ptr<Node> target;
-        for (auto& node : m_nodes) {
+        for (const auto& node : m_nodes) {
             if (pos == node->m_position) {
                 target = node;
             }
         }
         if (target.expired()) {
-            auto node = std::make_shared<Node>(pos, false);
+            const auto node = std::make_shared<Node>(pos, false);
             m_nodes.push_back(node);
             target = node;
         }
@@ -207,18 +210,18 @@ namespace graph {
         auto neighbors = updated_node->getNeighbors();
 
         auto lt_node_expired = neighbors[0].node.expired();
-        auto lt_node_pos = pos.at(Direction::Left);
+        const auto lt_node_pos = pos.at(Direction::Left);
 
         auto rt_node_expired = neighbors[1].node.expired();
-        auto rt_node_pos = pos.at(Direction::Right);
+        const auto rt_node_pos = pos.at(Direction::Right);
 
         auto up_node_expired = neighbors[2].node.expired();
-        auto up_node_pos = pos.at(Direction::Up);
+        const auto up_node_pos = pos.at(Direction::Up);
 
         auto dn_node_expired = neighbors[3].node.expired();
-        auto dn_node_pos = pos.at(Direction::Down);
+        const auto dn_node_pos = pos.at(Direction::Down);
 
-        for (auto& node : m_nodes) {
+        for (const auto& node : m_nodes) {
             if (lt_node_expired && lt_node_pos == node->m_position) {
                 updated_node->m_left = node;
                 node->m_right = updated_node;
@@ -255,11 +258,11 @@ namespace graph {
         while (!tads.empty()) {
             std::vector<Tadpole> processed;
             processed.reserve(tads.size() * 4);
-            for (auto& tad : tads) {
+            for (const auto& tad : tads) {
                 if (!tad.head.lock()->m_visited) {
                     return tad.route;
                 }
-                auto subtads = tad.produceTadpole();
+                const auto subtads = tad.produceTadpole();
                 processed.insert(processed.end(), subtads.begin(), subtads.end());
             }
             tads = processed;
@@ -281,7 +284,7 @@ namespace graph {
     {
         std::vector<Position> passages;
         passages.reserve(m_nodes.size());
-        for (auto& node : m_nodes) {
+        for (const auto& node : m_nodes) {
             passages.push_back(node->m_position);
         }
         return passages;
@@ -291,12 +294,12 @@ namespace graph {
     {
         std::vector<Position> walls;
         walls.reserve(m_nodes.size() * 4);
-        for (auto& node : m_nodes) {
+        for (const auto& node : m_nodes) {
             if (!node->m_visited) {
                 continue;
             }
 
-            for (auto& neig : node->getNeighbors()) {
+            for (const auto& neig : node->getNeighbors()) {
                 if (!neig.node.expired()) {
                     continue;
                 }
@@ -320,8 +323,8 @@ namespace graph {
 
     bool Graph::isExplored() const noexcept
     {
-        for (auto& node : m_nodes) {
-            // All nodes must be updated or some paths will leak
+        for (const auto& node : m_nodes) {
+            // All nodes must be updated  and linked or some paths will leak
             if (!node->m_visited) {
                 return false;
             }
@@ -331,11 +334,11 @@ namespace graph {
 
     bool Graph::isIntersectedWith(const Graph& graph) const noexcept
     {
-        auto t_passages = getPassagesPositions();
-        auto t_walls = getWallsPositions();
+        const auto t_passages = getPassagesPositions();
+        const auto t_walls = getWallsPositions();
 
-        auto o_passages = graph.getPassagesPositions();
-        auto o_walls = graph.getWallsPositions();
+        const auto o_passages = graph.getPassagesPositions();
+        const auto o_walls = graph.getWallsPositions();
 
         std::vector<Position> passages;
         passages.reserve(t_passages.size() + o_passages.size());
@@ -347,8 +350,8 @@ namespace graph {
         walls.insert(walls.end(), t_walls.begin(), t_walls.end());
         walls.insert(walls.end(), o_walls.begin(), o_walls.end());
 
-        for (auto& passage : passages) {
-            for (auto& wall : walls) {
+        for (const auto& passage : passages) {
+            for (const auto& wall : walls) {
                 if (passage == wall) {
                     return true;
                 }
@@ -364,14 +367,14 @@ namespace graph {
 
     void Graph::resetDeadendNodes() const noexcept
     {
-        for (auto& node : m_nodes) {
+        for (const auto& node : m_nodes) {
             node->resetDeadend();
         }
     }
 
     void Graph::resetVisitedNodes() const noexcept
     {
-        for (auto& node : m_nodes) {
+        for (const auto& node : m_nodes) {
             node->m_visited = false;
         }
         m_current.lock()->m_visited = true;
@@ -384,40 +387,37 @@ namespace graph {
         normalizeRect();
         graph.normalizeRect();
 
-        auto this_cn_spot = m_current.lock()->m_position;
-        auto this_rectangle = m_rectangle;
-
-        auto other_cn_spot = graph.m_current.lock()->m_position;
-        auto other_rectangle = graph.m_rectangle;
+        const auto this_cn_spot = m_current.lock()->m_position;
+        const auto other_cn_spot = graph.m_current.lock()->m_position;
 
         // Possible spot for centering map
-        auto cn_invariants = {
+        const auto cn_invariants = {
             this_cn_spot,                                  // Center
             Position(this_cn_spot.x - 1, this_cn_spot.y),  // Left-center
             Position(this_cn_spot.x + 1, this_cn_spot.y),  // Right-center
             Position(this_cn_spot.x, this_cn_spot.y + 1),  // Up-center
             Position(this_cn_spot.x, this_cn_spot.y - 1)   // Down-center
         };
-        for (auto& cn_spot : cn_invariants) {
+        for (const auto& cn_spot : cn_invariants) {
             normalizeRect();
             graph.normalizeRect();
 
-            auto delta_x = cn_spot.x - other_cn_spot.x;
-            auto delta_y = cn_spot.y - other_cn_spot.y;
+            const auto delta_x = cn_spot.x - other_cn_spot.x;
+            const auto delta_y = cn_spot.y - other_cn_spot.y;
 
             // If delta more then 0 then move other graph else move this graph
             // that will help align map at (0;0)
 
-            auto this_delta_x = delta_x < 0 ? -delta_x : 0;
-            auto this_delta_y = delta_y < 0 ? -delta_y : 0;
-            auto other_delta_x = delta_x > 0 ? delta_x : 0;
-            auto other_delta_y = delta_y > 0 ? delta_y : 0;
+            const auto this_delta_x = delta_x < 0 ? -delta_x : 0;
+            const auto this_delta_y = delta_y < 0 ? -delta_y : 0;
+            const auto other_delta_x = delta_x > 0 ? delta_x : 0;
+            const auto other_delta_y = delta_y > 0 ? delta_y : 0;
 
             shiftRect(this_delta_x, this_delta_y);
             graph.shiftRect(other_delta_x, other_delta_y);
 
-            auto this_rect = m_rectangle;
-            auto other_rect = graph.m_rectangle;
+            const auto this_rect = m_rectangle;
+            const auto other_rect = graph.m_rectangle;
 
             // These rects can be out of bounds, in that case connection spot is wrong
             if (this_rect.max_x > 9 ||
@@ -447,7 +447,7 @@ namespace graph {
         m_rectangle.max_x += delta_x;
         m_rectangle.max_y += delta_y;
 
-        for (auto& node : m_nodes) {
+        for (const auto& node : m_nodes) {
             node->m_position.x += delta_x;
             node->m_position.y += delta_y;
         }
@@ -458,15 +458,15 @@ namespace graph {
         char map[10][10] = {};
         memset((char*)map, '?', 100);
 
-        for (auto& passage : getPassagesPositions()) {
+        for (const auto& passage : getPassagesPositions()) {
             map[passage.y][passage.x] = '.';
         }
 
-        for (auto& passage : graph.getPassagesPositions()) {
+        for (const auto& passage : graph.getPassagesPositions()) {
             map[passage.y][passage.x] = '.';
         }
 
-        for (auto& wall : getWallsPositions()) {
+        for (const auto& wall : getWallsPositions()) {
             // Walls can be border of the labyrinth that can't be draw in 10x10 map
             if (wall.x > 9 || wall.x < 0 || wall.y > 9 || wall.y < 0) {
                 continue;
@@ -474,17 +474,17 @@ namespace graph {
             map[wall.y][wall.x] = '#';
         }
 
-        for (auto& wall : graph.getWallsPositions()) {
+        for (const auto& wall : graph.getWallsPositions()) {
             if (wall.x > 9 || wall.x < 0 || wall.y > 9 || wall.y < 0) {
                 continue;
             }
             map[wall.y][wall.x] = '#';
         }
 
-        auto this_start_pos = m_start.lock()->m_position;
+        const auto this_start_pos = m_start.lock()->m_position;
         map[this_start_pos.y][this_start_pos.x] = this_start;
 
-        auto other_start_pos = graph.m_start.lock()->m_position;
+        const auto other_start_pos = graph.m_start.lock()->m_position;
         map[other_start_pos.y][other_start_pos.x] = other_start;
 
         std::string sheet;
