@@ -312,6 +312,10 @@ namespace graph {
         std::vector<Position> walls;
         walls.reserve(m_nodes.size() * 4);
         for (auto& node : m_nodes) {
+            if (!node->m_visited) {
+                continue;
+            }
+
             for (auto& neig : node->getNeighbors()) {
                 if (!neig.node.expired()) {
                     continue;
