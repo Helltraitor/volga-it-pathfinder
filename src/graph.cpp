@@ -313,11 +313,6 @@ namespace graph {
         return walls;
     }
 
-    Rectangle Graph::getRectangle() const noexcept
-    {
-        return m_rectangle;
-    }
-
     void Graph::go(const Direction direction)
     {
         if (m_current.expired()) {
