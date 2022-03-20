@@ -43,14 +43,6 @@ namespace graph {
         max_y = t_max_y;
     }
 
-    bool operator == (const Rectangle& first, const Rectangle& second)
-    {
-        return first.min_x == second.min_x
-            && first.min_y == second.min_y
-            && first.max_x == second.max_x
-            && first.max_y == second.max_y;
-    }
-
     Tadpole::Tadpole(const std::vector<Direction> t_route, const std::vector<Position> t_nodes, std::weak_ptr<Node> t_head) noexcept
         : route(t_route), nodes(t_nodes), head(t_head)
     {}
