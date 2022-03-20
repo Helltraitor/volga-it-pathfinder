@@ -188,34 +188,6 @@ namespace graph {
         return std::weak_ptr<Node>();
     }
 
-    void Node::setNode(const Direction direction, const std::weak_ptr<Node> self, const std::weak_ptr<Node> node) noexcept
-    {
-        if (node.expired() || self.expired() || &(*self.lock()) != this) {
-            return;
-        }
-
-        switch (direction) {
-            case Direction::Left:
-                m_left = node;
-                m_left.lock()->m_position = Position(m_position.x - 1, m_position.y);
-                m_left.lock()->m_right = self;
-                break;
-            case Direction::Right:
-                m_right = node;
-                m_right.lock()->m_position = Position(m_position.x + 1, m_position.y);
-                m_right.lock()->m_left = self;
-                break;
-            case Direction::Up:
-                m_up = node;
-                m_up.lock()->m_position = Position(m_position.x, m_position.y + 1);
-                m_up.lock()->m_down = self;
-                break;
-            case Direction::Down:
-                m_down = node;
-                m_down.lock()->m_position = Position(m_position.x, m_position.y - 1);
-                m_down.lock()->m_up = self;
-                break;
-        }
     }
 
     void Node::resetDeadend() noexcept

@@ -64,7 +64,6 @@ namespace graph {
         bool deadendCheck() noexcept;
         std::vector<Neighbor> getNeighbors() const noexcept;
         std::weak_ptr<Node> getNode(const Direction direction) const noexcept;
-        void setNode(const Direction direction, const std::weak_ptr<Node> self, const std::weak_ptr<Node> node) noexcept;
         void resetDeadend() noexcept;
 
     public:
