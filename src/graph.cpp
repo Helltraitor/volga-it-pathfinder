@@ -180,14 +180,9 @@ namespace graph {
                 return m_right;
             case Direction::Up:
                 return m_up;
-            case Direction::Down:
+            default:
                 return m_down;
         }
-
-        // Unreachable
-        return std::weak_ptr<Node>();
-    }
-
     }
 
     void Node::resetDeadend() noexcept
