@@ -9,11 +9,8 @@ namespace graph {
         : node(t_node), direction(t_direction)
     {}
 
-    Position::Position(const int t_x, const int t_y) noexcept
-    {
-        x = t_x;
-        y = t_y;
-    }
+    Position::Position(const int t_x, const int t_y) noexcept : x(t_x), y(t_y)
+    {}
 
     Position Position::at(const Direction direction) const noexcept
     {
@@ -36,12 +33,8 @@ namespace graph {
     }
 
     Rectangle::Rectangle(const int t_min_x, const int t_min_y, const int t_max_x, const int t_max_y) noexcept
-    {
-        min_x = t_min_x;
-        min_y = t_min_y;
-        max_x = t_max_x;
-        max_y = t_max_y;
-    }
+        : min_x(t_min_x), min_y(t_min_y), max_x(t_max_x), max_y(t_max_y)
+    {}
 
     Tadpole::Tadpole(const std::vector<Direction> t_route, const std::vector<Position> t_nodes, std::weak_ptr<Node> t_head) noexcept
         : route(t_route), nodes(t_nodes), head(t_head)
