@@ -74,6 +74,35 @@ namespace pathfinder {
 
     Advice Pathfinder::getAdvice() const noexcept
     {
+        // For meeting in the labyrinth only one plan exists:
+        // I. Explore the labyrinth for knowing it's size and your position in.
+        // II. You met your pal.
+        // III. You just need to restore the map.
+        // 
+        // II. You doesn't met your pal:
+        // III. Wait until he\she is done with the exploring
+        //         (at this step you can move in labyrinth center direction).
+        // IV. Count nodes of the labyrinth.
+        // V. If they are different - you cannot meet.
+        // 
+        // V. Otherwise restore the map (e.g. by deadends of graph)
+        // VI. Find nearest node to both of you and move at it direction.
+        // VII. If you met then all is good.
+        // 
+        // VII. But.. What if you doesn't met you friend in the rendezvous.
+        // 
+        // Then two variants exits:
+        // 1. You have two equal labyrinth which are not connected. - Good case
+        // 2. You have symmetric labyrinth. - Ass tear case
+        // 
+        //     In the first case only one way to restore map exists. So you can
+        // know here and know that game is over. But in the second case you need
+        // to find all ways to restore the map and try to reach the rendezvous
+        // again OR one is waitng at the outer side and other is going to follow
+        // the outer side (more realistic variant).
+        //     When one follow the outer side is normal to reset visit nodes flags
+        // and go and go until meeting friend or reaching visited node.
+        //
 
         // DEADEND ADVICE
         auto node = m_graph->getCurrent().lock();
