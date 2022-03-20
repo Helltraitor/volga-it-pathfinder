@@ -88,7 +88,6 @@ namespace graph {
         std::weak_ptr<Node> getCurrent() const noexcept;
         size_t getNodeCount() const noexcept;
         std::vector<Position> getPassagesPositions() const noexcept;
-        std::weak_ptr<Node> getPrevious() const noexcept;
         std::vector<Position> getWallsPositions() const noexcept;
         Rectangle getRectangle() const noexcept;
         void go(const Direction direction);
@@ -108,7 +107,6 @@ namespace graph {
         Rectangle m_rectangle;
         std::vector<std::shared_ptr<Node>> m_nodes;
         std::weak_ptr<Node> m_current;
-        std::weak_ptr<Node> m_previous;
         std::weak_ptr<Node> m_start;
     };
 }

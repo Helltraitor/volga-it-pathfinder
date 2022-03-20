@@ -294,11 +294,6 @@ namespace graph {
         return passages;
     }
 
-    std::weak_ptr<Node> Graph::getPrevious() const noexcept
-    {
-        return m_previous;
-    }
-
     std::vector<Position> Graph::getWallsPositions() const noexcept
     {
         std::vector<Position> walls;
