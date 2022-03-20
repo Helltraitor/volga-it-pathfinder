@@ -2,8 +2,6 @@
 #include "graph.hpp"
 #include "pathfinder.hpp"
 
-#include <cstdlib>
-#include <ctime>
 #include <iostream>
 #include <string>
 
