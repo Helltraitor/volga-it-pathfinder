@@ -4,14 +4,18 @@
 #include <tuple>
 
 namespace graph {
-    /* Structs */
+    /* Neighbor */
+    // Represents the neighbor of the choosen one graph. Neighbor node can be expired (wall)
     Neighbor::Neighbor(const std::weak_ptr<Node> t_node, const Direction t_direction) noexcept
         : node(t_node), direction(t_direction)
     {}
 
+    /* Position */
+    // Represents node position relative to the start node in the graph
     Position::Position(const int t_x, const int t_y) noexcept : x(t_x), y(t_y)
     {}
 
+    // Returns a new position at the direction relative to this position
     Position Position::at(const Direction direction) const noexcept
     {
         switch (direction) {
@@ -32,10 +36,14 @@ namespace graph {
             && first.y == second.y;
     }
 
+    /* Rectangle */
+    // Represents a 'rectangle' which could be used to cover the graph and all it's nodes
     Rectangle::Rectangle(const int t_min_x, const int t_min_y, const int t_max_x, const int t_max_y) noexcept
         : min_x(t_min_x), min_y(t_min_y), max_x(t_max_x), max_y(t_max_y)
     {}
 
+    /* Tadpole */
+    // Represents a route to the head relative to the current node using the world directions and the graph directions
     Tadpole::Tadpole(
         const std::vector<Direction> t_route,
         const std::vector<Position> t_nodes,
@@ -43,6 +51,7 @@ namespace graph {
         : route(t_route), nodes(t_nodes), head(t_head)
     {}
 
+    // Returns the vector of tadpoles from this to the nearest passages in the labyrinth
     std::vector<Tadpole> Tadpole::produceTadpole() const noexcept
     {
         std::vector<Tadpole> passages;
@@ -127,6 +136,8 @@ namespace graph {
 
     Node::Node() noexcept : Node::Node(false) {}
 
+    // Returns a value of internal boolean field m_deadend or do deadend check if node is visited.
+    // Node is deadend if only one non-deadend node exists near to this
     bool Node::deadendCheck() noexcept
     {
         if (m_deadend) {
@@ -147,6 +158,8 @@ namespace graph {
         return m_deadend;
     }
 
+    // Returns all neighbors of the current node even when some of them is wall.
+    // In that case some of them is expired
     std::vector<Neighbor> Node::getNeighbors() const noexcept
     {
         return {
@@ -157,6 +170,8 @@ namespace graph {
         };
     }
 
+    // Returns node at the indicated direction even when direction point to the wall.
+    // In that case weak ptr is expired
     std::weak_ptr<Node> Node::getNode(const Direction direction) const noexcept
     {
         switch (direction) {
@@ -171,12 +186,14 @@ namespace graph {
         }
     }
 
+    // Sets the internal boolean field m_deadend to false which could help for rerun the labyrinth
     void Node::resetDeadend() noexcept
     {
         m_deadend = false;
     }
 
     /* Graph */
+    // Represents a node net which represent explored parts of the labyrinth
     Graph::Graph(std::shared_ptr<Node> start) noexcept
         : m_start(start),
         m_current(start),
@@ -185,6 +202,8 @@ namespace graph {
         m_nodes.push_back(start);
     }
 
+    // Creates or find the node at the direction relative to the current and linking this node to another known nodes.
+    // Have O(n) complexity
     void Graph::createNodeAt(const Direction direction) noexcept
     {
         const auto pos = m_current.lock()->m_position.at(direction);
@@ -253,8 +272,8 @@ namespace graph {
         updateRectangle(pos);
     }
 
-    // Returns nearest unvisited node. Nodes are tooks in (left, right, up, down)
-    // order. Non-recursive function - will not occur fatal error.
+    // Returns a nearest unvisited node using tadpoles. Nodes are tooks in (left, right, up, down) order.
+    // Non-recursive function - will not occur stack overflow error. Have O(n) complexity
     std::vector<Direction> Graph::findUnvisitedNode() const noexcept
     {
         std::vector<Tadpole> tads{ Tadpole({}, {}, m_current) };
@@ -273,16 +292,19 @@ namespace graph {
         return {};
     }
 
+    // Returns latest visited node (node where person right now in Fairyland)
     std::weak_ptr<Node> Graph::getCurrent() const noexcept
     {
         return m_current;
     }
 
+    // Returns count of known nodes
     size_t Graph::getNodeCount() const noexcept
     {
         return m_nodes.size();
     }
 
+    // Returns positions of known nodes
     std::vector<Position> Graph::getPassagesPositions() const noexcept
     {
         std::vector<Position> passages;
@@ -293,6 +315,7 @@ namespace graph {
         return passages;
     }
 
+    // Returns count of expired neighbor nodes only of visited nodes. These neighbors represent walls in the labyrinth
     std::vector<Position> Graph::getWallsPositions() const noexcept
     {
         std::vector<Position> walls;
@@ -312,16 +335,22 @@ namespace graph {
         return walls;
     }
 
+    // Sets node at the direction as current and makes it visited. Must be used only after `Pathfinder::updateNode`.
+    // For now `Pathfinder::updateNode` is called in `Pathfinder::go` which must be used for this kind of operations
+    // due to synchronization of person position in the world and in the graph.
+    // 
+    // Throws std::runtime_error when current node is expired (when previous wasn't updated)
     void Graph::go(const Direction direction)
     {
         if (m_current.expired()) {
             throw std::runtime_error(
-                "Current node is expired or equals nullptr_t. This occurred because this node wasn't updated");
+                "Current node is expired or equals nullptr_t. This occurred because preivous node wasn't updated");
         }
         m_current = m_current.lock()->getNode(direction);
         m_current.lock()->m_visited = true;
     }
 
+    // Checks if all nodes are visited
     bool Graph::isExplored() const noexcept
     {
         for (const auto& node : m_nodes) {
@@ -333,6 +362,8 @@ namespace graph {
         return true;
     }
 
+    // Checks if walls of this graph are intersected with passages of another graph and does the same for walls
+    // of another graph. Have O((n + m)^2) complexity
     bool Graph::isIntersectedWith(const Graph& graph) const noexcept
     {
         const auto t_passages = getPassagesPositions();
@@ -361,11 +392,13 @@ namespace graph {
         return false;
     }
 
+    // Shifts nodes position such way that graph will have only non-negative nodes positions
     void Graph::normalizeRect() noexcept
     {
         shiftRect(-m_rectangle.min_x, -m_rectangle.min_y);
     }
 
+    // Resets deadend node's internal variables. Must be used before rerun the labyrinth
     void Graph::resetDeadendNodes() const noexcept
     {
         for (const auto& node : m_nodes) {
@@ -373,6 +406,7 @@ namespace graph {
         }
     }
 
+    // Resets visit of all node except the current. Must be used before rerun the labyrinth
     void Graph::resetVisitedNodes() const noexcept
     {
         for (const auto& node : m_nodes) {
@@ -381,10 +415,13 @@ namespace graph {
         m_current.lock()->m_visited = true;
     }
 
+    // Tries to restore map using information of this and partner's graphs. Does it relative to five spots:
+    // Current node position (if they had met here) and left, right, up, and down positions relative
+    // to the current node.
+    // Could returns the empty string when it impossible to do relative to this graph (in that case you need
+    // to swap these graphs) or when algorithm cannot restore this map.
     std::string Graph::restoreMap(Graph& graph, const char this_start, const char other_start) noexcept
     {
-        // TODO: CHECK RECT MIN MAX VALUE AFTER SHIFT
-
         normalizeRect();
         graph.normalizeRect();
 
@@ -437,6 +474,7 @@ namespace graph {
         return std::string();
     }
 
+    // Shifts graph by `delta_x` and `delta_y` relative to the current position
     void Graph::shiftRect(const int delta_x, const int delta_y) noexcept
     {
         if (delta_x == 0 && delta_y == 0) {
@@ -454,6 +492,7 @@ namespace graph {
         }
     }
 
+    // Draws map using shifted graphs (this and other). Must be used only when rectangle contains by 10x10 map.
     std::string Graph::drawMap(const Graph& graph, const char this_start, const char other_start) noexcept
     {
         char map[10][10] = {};
