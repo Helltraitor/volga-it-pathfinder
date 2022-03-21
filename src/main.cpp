@@ -5,8 +5,28 @@
 #include <iostream>
 #include <string>
 
-int main()
+/// This function is being used when program is going to close. Writes warning message and awaits input on true value
+/// otherwise do nothing
+/// 
+/// @param awaiting When true function prints a warning message and awaits enter for close the program
+void awaiting_on_exit(const bool awaiting)
 {
+    if (awaiting) {
+        std::cout << std::endl << "Press ENTER to close this window...";
+        std::cin.get();
+    }
+}
+
+int main(int argc, char** argv)
+{
+    // When TEST_MODE is true, program shall not waiting for input for close
+    bool TEST_MODE = false;
+    for (size_t index = 1; index < argc; ++index) {
+        TEST_MODE = TEST_MODE
+            || strcmp("-t", argv[index]) == 0
+            || strcmp("--test_mode", argv[index]) == 0;
+    }
+
     /* -------------------------- INITIALIZATION -------------------------- */
 
     const auto world = std::make_shared<Fairyland>();
@@ -20,11 +40,11 @@ int main()
     const auto elena_p = pathfinder::Pathfinder(world, Character::Elena, elena_g);
     elena_p.updateNode();
     elena_g->getCurrent().lock()->deadendCheck();
-    
+
     /* -------------------------------------------------------------------- */
-    
+
     /* ------------------------ THE MAIN ALGORITHM ------------------------ */
-    
+
     auto ivan_a = ivan_p.getAdvice();
     auto elena_a = elena_p.getAdvice();
 
@@ -55,6 +75,7 @@ int main()
                 if (elena_g->getNodeCount() < ivan_g->getNodeCount() && elena_g->isExplored()) {
                     std::cout << "Ivan and Elena cannot meet!" << std::endl;
                     std::cout << "Turn count: " << world->getTurnCount() << std::endl;
+                    awaiting_on_exit(!TEST_MODE);
                     return 0;
                 }
                 for (size_t index = 0; index < ivan_a.route.size() && !meeting; ++index) {
@@ -69,6 +90,7 @@ int main()
                 if (ivan_g->getNodeCount() < elena_g->getNodeCount() && ivan_g->isExplored()) {
                     std::cout << "Ivan and Elena cannot meet!" << std::endl;
                     std::cout << "Turn count: " << world->getTurnCount() << std::endl;
+                    awaiting_on_exit(!TEST_MODE);
                     return 0;
                 }
                 for (size_t index = 0; index < elena_a.route.size() && !meeting; ++index) {
@@ -81,12 +103,14 @@ int main()
                 // then we need to check topologic and then try to concat graphs
                 if (!ivan_g->isExplored() || !elena_g->isExplored()) {
                     std::cout << "Algorithm error: labyrinth are not explored but both pals got a Rendezvous advice" << std::endl;
+                    awaiting_on_exit(!TEST_MODE);
                     return 0;
                 }
 
                 if (ivan_g->getNodeCount() != elena_g->getNodeCount()) {
                     std::cout << "Ivan and Elena cannot meet!" << std::endl;
                     std::cout << "Turn count: " << world->getTurnCount() << std::endl;
+                    awaiting_on_exit(!TEST_MODE);
                     return 0;
                 }
 
@@ -102,11 +126,13 @@ int main()
                     if (ivan_a.type == pathfinder::AdviceType::Rendezvous) {
                         if (!ivan_g->isExplored()) {
                             std::cout << "Algorithm error: labyrinth are not explored but Ivan got a Rendezvous advice" << std::endl;
+                            awaiting_on_exit(!TEST_MODE);
                             return 0;
                         }
                         // For example, this could happen when the labyrinth have symmetric unlinked parts
                         std::cout << "Ivan and Elena cannot meet!" << std::endl;
                         std::cout << "Turn count: " << world->getTurnCount() << std::endl;
+                        awaiting_on_exit(!TEST_MODE);
                         return 0;
                     }
                     for (size_t index = 0; index < ivan_a.route.size() && !meeting; ++index) {
@@ -145,8 +171,10 @@ int main()
     }
     if (sheet.empty()) {
         std::cout << "Restore map error: This algorithm cannot restore map for this case" << std::endl;
+        awaiting_on_exit(!TEST_MODE);
         return 0;
     }
-    std::cout << sheet << std::endl;
+    std::cout << std::endl << sheet << std::endl;
+    awaiting_on_exit(!TEST_MODE);
     return 0;
 }
