@@ -88,7 +88,7 @@ namespace graph {
         std::weak_ptr<Node> getNode(const Direction direction) const noexcept;
 
         /// Sets the internal boolean field m_deadend to false which could help for rerun the labyrinth
-        void resetDeadend() noexcept;
+        inline void resetDeadend() noexcept;
 
     public:
         Position m_position;
@@ -146,7 +146,7 @@ namespace graph {
         bool isIntersectedWith(const Graph& graph) const noexcept;
 
         /// Shifts nodes position such way that graph will have only non-negative nodes positions
-        void normalizeRect() noexcept;
+        inline void normalizeRect() noexcept;
 
         /// Resets deadend node's internal variables. Must be used before rerun the labyrinth
         void resetDeadendNodes() const noexcept;

@@ -77,10 +77,10 @@ namespace pathfinder {
         Advice getAdvice() const noexcept;
 
         /// @returns A fairytail character which used this pathfinder to reach pal
-        Character getCharacter() const noexcept;
+        inline Character getCharacter() const noexcept;
 
         /// @returns A fairytail world where person tries to find the pal
-        std::shared_ptr<Fairyland> getWorld() const noexcept;
+        inline std::shared_ptr<Fairyland> getWorld() const noexcept;
 
         /// Moves the pal in the indicated direction in the graph, also updates node. Normally must be used through
         /// the movePals function

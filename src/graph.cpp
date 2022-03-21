@@ -179,7 +179,7 @@ namespace graph {
         }
     }
 
-    void Node::resetDeadend() noexcept
+    inline void Node::resetDeadend() noexcept
     {
         m_deadend = false;
     }
@@ -368,7 +368,7 @@ namespace graph {
         return false;
     }
 
-    void Graph::normalizeRect() noexcept
+    inline void Graph::normalizeRect() noexcept
     {
         shiftRect(-m_rectangle.min_x, -m_rectangle.min_y);
     }

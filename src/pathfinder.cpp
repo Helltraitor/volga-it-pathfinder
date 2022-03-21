@@ -133,12 +133,12 @@ namespace pathfinder {
         return Advice(AdviceType::Rendezvous);
     }
 
-    Character Pathfinder::getCharacter() const noexcept
+    inline Character Pathfinder::getCharacter() const noexcept
     {
         return m_character;
     }
 
-    std::shared_ptr<Fairyland> Pathfinder::getWorld() const noexcept
+    inline std::shared_ptr<Fairyland> Pathfinder::getWorld() const noexcept
     {
         return m_world;
     }
